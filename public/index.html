@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Calidad de Aire - ESP32</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>🌱 Monitor de Calidad de Aire</h1>
+        <p>Sistema de monitoreo ambiental con ESP32</p>
+    </header>
+
+    <main>
+        <!-- Datos en tiempo real -->
+        <section class="datos-actuales">
+            <h2>📊 Datos Actuales</h2>
+            <div class="tarjetas">
+                <div class="tarjeta temperatura">
+                    <h3>🌡️ Temperatura</h3>
+                    <span class="valor" id="temperatura">--</span>
+                    <span class="unidad">°C</span>
+                </div>
+                <div class="tarjeta humedad">
+                    <h3>💧 Humedad</h3>
+                    <span class="valor" id="humedad">--</span>
+                    <span class="unidad">%</span>
+                </div>
+                <div class="tarjeta aire">
+                    <h3>🌬️ Calidad Aire</h3>
+                    <span class="valor" id="calidad-aire">--</span>
+                    <span class="estado" id="estado-aire">--</span>
+                </div>
+            </div>
+            <div class="ultima-actualizacion">
+                Última actualización: <span id="ultima-actualizacion">--</span>
+            </div>
+        </section>
+
+        <!-- Estadísticas -->
+        <section class="estadisticas">
+            <h2>📈 Estadísticas (24h)</h2>
+            <div class="stats-grid">
+                <div class="stat">
+                    <label>Total lecturas:</label>
+                    <span id="total-lecturas">--</span>
+                </div>
+                <div class="stat">
+                    <label>Temp. promedio:</label>
+                    <span id="temp-promedio">--</span>°C
+                </div>
+                <div class="stat">
+                    <label>Humedad promedio:</label>
+                    <span id="humedad-promedio">--</span>%
+                </div>
+            </div>
+        </section>
+
+        <!-- Historial -->
+        <section class="historial">
+            <h2>📋 Historial Reciente</h2>
+            <div class="controles">
+                <button onclick="cargarHistorial()">🔄 Actualizar</button>
+                <select id="limite-registros">
+                    <option value="10">Últimos 10</option>
+                    <option value="50" selected>Últimos 50</option>
+                    <option value="100">Últimos 100</option>
+                </select>
+            </div>
+            <div class="tabla-container">
+                <table id="tabla-historial">
+                    <thead>
+                        <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Temperatura</th>
+                            <th>Humedad</th>
+                            <th>Calidad Aire</th>
+                            <th>Dispositivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" class="cargando">Cargando datos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Simulador para pruebas -->
+        <section class="simulador">
+            <h2>🧪 Simulador (Para Pruebas)</h2>
+            <p>Usa este simulador para probar el sistema antes de conectar el ESP32</p>
+            <div class="form-simulador">
+                <input type="number" id="sim-temp" placeholder="Temperatura (°C)" step="0.1">
+                <input type="number" id="sim-humedad" placeholder="Humedad (%)" step="0.1">
+                <input type="number" id="sim-aire" placeholder="Calidad aire (0-1000)" step="1">
+                <button onclick="enviarDatosPrueba()">📤 Enviar Datos</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Proyecto de Pasantías - Monitoreo Ambiental 2025</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
