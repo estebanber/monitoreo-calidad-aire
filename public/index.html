@@ -6,9 +6,9 @@
     <title>Monitor calidad de aire</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
 </head>
 <body>
     <header>
@@ -35,7 +35,7 @@
         </div>
         <div class="infoTemperatura">
             <h4 class="tituloInfoTemperatura">ESTADO ACTUAL</h4>
-            <p>El aire es <span class="estado" id="estado-aire"></span></p>
+            <p>El aire es <span class="estado-aire" id="estado-aire"></span></p>
         </div>
 
         <div class="tarjetaHumedad">
@@ -66,7 +66,7 @@
                 <option value="100">Ultimos 100</option>
             </select>
         <div class="contenedorTablaHistorial">
-            <table class="tablaHistorial">
+            <table class="tablaHistorial" id="tabla-historial">
                 <thead>
                     <tr>
                         <th>Hora</th>
@@ -86,6 +86,13 @@
             </table>
         </div>
     </section>
+    <section class="contenedorGrafico">
+        <h2>Evolución de Datos</h2>
+        <canvas id="graficoLecturas"></canvas>
+    </section>
+
+
+    
 
 
 
@@ -112,7 +119,7 @@
         <p>Proyecto de Pasantías - Monitoreo Ambiental 2025</p>
     </footer>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
