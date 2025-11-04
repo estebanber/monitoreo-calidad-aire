@@ -35,7 +35,7 @@
         </div>
         <div class="infoTemperatura">
             <h4 class="tituloInfoTemperatura">ESTADO ACTUAL</h4>
-            <p>El aire es <span class="estado" id="estado-aire"></span></p>
+            <p>El aire es <span class="estado-aire" id="estado-aire"></span></p>
         </div>
 
         <div class="tarjetaHumedad">
@@ -66,7 +66,7 @@
                 <option value="100">Ultimos 100</option>
             </select>
         <div class="contenedorTablaHistorial">
-            <table class="tablaHistorial">
+            <table class="tablaHistorial" id="tabla-historial">
                 <thead>
                     <tr>
                         <th>Hora</th>
@@ -86,6 +86,13 @@
             </table>
         </div>
     </section>
+    <section class="contenedorGrafico">
+        <h2>Evolución de Datos</h2>
+        <canvas id="graficoLecturas"></canvas>
+    </section>
+
+
+    
 
 
 
@@ -112,7 +119,7 @@
         <p>Proyecto de Pasantías - Monitoreo Ambiental 2025</p>
     </footer>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
