@@ -8,14 +8,28 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "cors": "^2.8.5",
-    "sqlite3": "^5.1.6"
+    "express": "^4.21.2",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
-  "keywords": ["esp32", "arduino", "calidad-aire", "iot"],
+  "keywords": [
+    "esp32",
+    "arduino",
+    "calidad-aire",
+    "iot"
+  ],
   "author": "Pasantes Electrónica",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/estebanber/monitoreo-calidad-aire.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/estebanber/monitoreo-calidad-aire/issues"
+  },
+  "homepage": "https://github.com/estebanber/monitoreo-calidad-aire#readme"
 }
