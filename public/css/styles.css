@@ -1,8 +1,16 @@
 
 body{
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    flex-direction: column;  /* coloca los div uno debajo del otro */
+  min-height: 100vh;       /* para centrar verticalmente en toda la pantalla */
+  margin: 0;
+  padding: 0;
     background: radial-gradient(120% 120% at 10% 20%, rgba(51, 204, 255, 0.18), transparent 65%),
         radial-gradient(100% 100% at 90% 10%, rgba(255, 111, 97, 0.2), transparent 60%),
         linear-gradient(180deg, #050a14, #101f32)
+    
 }
 header{
     display: grid;
@@ -67,7 +75,6 @@ h1{
     justify-items: center; 
     align-items: start; 
     margin-top: 5%;
-    margin-left: 10%;
     margin-bottom: 15%;
     font-size: 18px;
     font-family: "Roboto Condensed", sans-serif;
@@ -80,8 +87,6 @@ h1{
     color: #ffff;
     font-size: 28px;
     margin-top: 18%;
-    margin-right: 50%;
-
 }
 .tarjetaTemperatura{
     width: 100%;
@@ -96,10 +101,13 @@ h1{
     text-align: center;
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease;
     margin: 5%;
     font-size: 25px;
-    
+
+}
+.tarjetaTemperatura:hover{
+    transform: scale(1.05);
 }
 .tarjetaHumedad{
     width: 100%;
@@ -114,9 +122,12 @@ h1{
     text-align: center;
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;
-    transition: transform 0.3s ease;
     margin: 5%;
     font-size: 25px;
+    transition: transform 0.5s ease;
+}
+.tarjetaHumedad:hover{
+    transform: scale(1.05);
 }
  .tarjetaCalidad{
     width: 100%;
@@ -131,9 +142,12 @@ h1{
     text-align: center;
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease;;
     margin: 5%;
     font-size: 25px;
+ }
+ .tarjetaCalidad:hover{
+    transform: scale(1.05);
  }
  .infoTemperatura{
     padding: auto;
@@ -154,6 +168,10 @@ h1{
     width: 100%;   
     height: 100%;
     margin: 5%;
+    transition: transform 0.5s ease;;
+ }
+ .infoTemperatura:hover{
+    transform: scale(1.05);
  }
  .infoHumedad{
     padding: auto;
@@ -174,6 +192,10 @@ h1{
     width: 100%;   
     height: 100%;
     margin: 5%;
+    transition: transform 0.5s ease;;
+ }
+ .infoHumedad:hover{
+    transform: scale(1.05);
  }
  .infoCalidad{
     padding: auto;
@@ -194,7 +216,11 @@ h1{
     width: 100%;   
     height: 100%;
     margin: 5%;
+    transition: transform 0.5s ease;;
  }
+.infoCalidad:hover{
+    transform: scale(1.05);
+}
 .aire-excelente{
     text-align: center;
 }
@@ -225,8 +251,7 @@ h1{
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;  
     display: grid;
-    width: 90%;
-    margin-left: 5%;
+    width: 60%;
     grid-template-columns: 1fr auto auto;  
     align-items: center; 
     gap: 3%; 
@@ -342,7 +367,6 @@ th{
     grid-template-columns: 250px 250px 250px;
     grid-template-rows: 80px 200px;
     margin-top: 10%;
-    margin-left: 10%;
     font-family: 'Montserrat', sans-serif;
     column-gap: 14%;
 }
@@ -351,6 +375,10 @@ th{
     grid-column: 1;
     grid-row: 1;
     display: block;
+    transition: transform 0.5s ease;;
+}
+.conocenos:hover{
+    transform: scale(1.05);
 }
 
 .quienesSomos{
@@ -369,8 +397,11 @@ th{
     box-shadow: inset 0 0 10px #108888;
     text-align: center;
     padding: 1rem;
+    transition: transform 0.5s ease;;
 }
-
+.quienesSomos:hover{
+    transform: scale(1.05);
+}
 
 .comoHicimos{
     grid-column: 2;
@@ -388,8 +419,11 @@ th{
     box-shadow: inset 0 0 10px #108888;
     text-align: center;
     padding: 1rem;
+    transition: transform 0.5s ease;;
 }
-
+.comoHicimos:hover{
+    transform: scale(1.05);
+}
 
 .comoFunciona{
     grid-column: 3;
@@ -408,8 +442,11 @@ th{
     box-shadow: inset 0 0 10px #108888;
     text-align: center;
     padding: 1rem;
+    transition: transform 0.5s ease;;
 }
-
+.comoFunciona:hover{
+    transform: scale(1.05);
+}
 
 
 
