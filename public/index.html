@@ -27,33 +27,40 @@
     </header>
 
     <section class="contenedorDatosActuales">
-        <h2 class="datosActuales">Datos Actuales</h2>
-        <div class="tarjetaTemperatura">
-            <h3 class="temperatura">Temperatura</h3>
-            
-            <span class="indicadorTemperatura" id="temperatura">1</span><span>°C</span>
-        </div>
-        <div class="infoTemperatura">
-            <h4 class="tituloInfoTemperatura">ESTADO ACTUAL</h4>
-            <p>El aire es <span class="estado-aire" id="estado-aire"></span></p>
-        </div>
+        <h2 class="datosActuales">Datos Actuales</h2> 
+        <div class="gridDatos">
+            <div class="grupo">
+                <div class="tarjetaTemperatura">
+                    <h3 class="temperatura">Temperatura</h3>
+                    <span class="indicadorTemperatura" id="temperatura">1</span><span>°C</span>
+                </div>
+                <div class="infoTemperatura">
+                    <h4 class="tituloInfoTemperatura">ESTADO ACTUAL</h4>
+                    <p>El aire es <span class="estado-aire" id="estado-aire"></span></p>
+                </div>
+            </div>
 
-        <div class="tarjetaHumedad">
-            <h3 class="humedad">Humedad</h3>
-            <span class="indicadorHumedad" id="humedad">--</span><span>%</span>
-        </div>
-        <div class="infoHumedad">
-            <h4 class="tituloInfoHumedad">PEDIODO DE ACTUALIZACIÓN</h4>
-            <p>Cada 5 segundos.</p>
-        </div>
+            <div class="grupo">
+                <div class="tarjetaHumedad">
+                    <h3 class="humedad">Humedad</h3>
+                    <span class="indicadorHumedad" id="humedad">--</span><span>%</span>
+                </div>
+                <div class="infoHumedad">
+                    <h4 class="tituloInfoHumedad">PEDIODO DE ACTUALIZACIÓN</h4>
+                    <p>Cada 5 segundos.</p>
+                </div>
+            </div>
 
-        <div class="tarjetaCalidad">
-            <h3 class="calidad">Calidad</h3>
-            <span class="indicadorCalidad" id="calidad_aire">--</span><span>AQI</span>
-        </div>
-        <div class="infoCalidad">
-            <h4 class="tituloInfoCalidad">SENSORES Y DISPOSITIVOS</h4>
-            <p>ESP32 + DHT22 + MQ135.</p>
+            <div class="grupo">
+                <div class="tarjetaCalidad">
+                    <h3 class="calidad">Calidad</h3>
+                    <span class="indicadorCalidad" id="calidad_aire">--</span><span>AQI</span>
+                </div>
+                <div class="infoCalidad">
+                    <h4 class="tituloInfoCalidad">SENSORES Y DISPOSITIVOS</h4>
+                    <p>ESP32 + DHT22 + MQ135.</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -98,19 +105,22 @@
 
     <section class="contenedorConocenos">
         <h2 class="conocenos">Conocenos</h2>
-        <div class="quienesSomos">
-            <h3>¿Quienes somos?</h3> 
-            <p>Somos un grupo de estudiantes de la escuela Tomas Alva Edison, estamos haciendo nuestras pasantias en la empresa Wakapi. </p>
-        </div>
 
-        <div class="comoHicimos">
-            <h3>¿Como hicimos el proyecto?</h3>
-            <p>Lo primero que hicimos fue dividir tareas. Luego empezamos a trabajar</p>
-        </div>
+        <div class="infoConocenos">
+            <div class="quienesSomos">
+                <h3>¿Quienes somos?</h3> 
+                <p>Somos un grupo de estudiantes de la escuela Tomas Alva Edison, estamos haciendo nuestras pasantias en la empresa Wakapi. </p>
+            </div>
 
-        <div class="comoFunciona">
-            <h3>¿Como funciona el proyecto?</h3>
-            <p>El sensor ESP32 manda a la página lo que toma los sensores, y mediante un servidor mandamos todo a la página web.</p>
+            <div class="comoHicimos">
+                <h3>¿Como hicimos el proyecto?</h3>
+                <p>Lo primero que hicimos fue dividir tareas. Luego empezamos a trabajar</p>
+            </div>
+
+            <div class="comoFunciona">
+                <h3>¿Como funciona el proyecto?</h3>
+                <p>El sensor ESP32 manda a la página lo que toma los sensores, y mediante un servidor mandamos todo a la página web.</p>
+            </div>
         </div>
     </section>
     
