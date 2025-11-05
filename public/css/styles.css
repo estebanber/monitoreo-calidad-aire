@@ -38,12 +38,20 @@ body {
 }
 
 
-.contenedorGrafico {
+.contenedorLed {
     width: 100%;
-    display: flex;
-    justify-content: center;
+    height: 100%;
+    grid-column: 2;
+    grid-row: 1;
 }
-
+#anillo-led-canvas {
+    color: rgb(255, 255, 255);
+    display: block;
+    width: 250px;
+    height: 250px;
+    border-radius: 80%;
+    margin-top: 5%;
+}
 
 @media (max-width: 900px) {
     .headerPrincipal {
