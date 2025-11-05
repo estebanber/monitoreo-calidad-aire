@@ -1,81 +1,62 @@
+* {
+    box-sizing: border-box;
+}
 
-body{
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    flex-direction: column;  /* coloca los div uno debajo del otro */
-    min-height: 100vh;       /* para centrar verticalmente en toda la pantalla */
+body {
     margin: 0;
     padding: 0;
     background: radial-gradient(120% 120% at 10% 20%, rgba(51, 204, 255, 0.18), transparent 65%),
-        radial-gradient(100% 100% at 90% 10%, rgba(255, 111, 97, 0.2), transparent 60%),
-        linear-gradient(180deg, #050a14, #101f32)
-    
+    radial-gradient(100% 100% at 90% 10%, rgba(255, 111, 97, 0.2), transparent 60%),
+    linear-gradient(180deg, #050a14, #101f32);
+    font-family: 'Montserrat', sans-serif;
 }
-header{
+
+.headerPrincipal{
+    width: 100%;
     display: grid;
-    color: #ffff;
-    width: 50%;
-    grid-template-columns: 20% auto 20%;
-    grid-template-rows: 20% auto 20%   ;
-    font-family: "Anton", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    margin-left: -30%;
+    grid-template-columns: 1fr 1fr;
+    color: #fff;
+    align-items: center;
+    padding: 40px;
+    gap: 40px;
 }
-h1{
-    width: 50%;
-    grid-column: 2;
-    grid-row: 2;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-style: normal;
+
+.textoHeader{
+    text-align: left;
 }
-.descripcion{
-    grid-column: 2;
-    grid-row: 3;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-    font-style: italic;
-}
+
 .contenedorUltimaLectura{
-    grid-column: 2;
-    grid-row: 4;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-style: normal;
-    margin-top: 8%;
     background-color: rgba(13, 29, 48, 0.75);
     border-radius: 10px;
     text-align: center;
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;
+    text-align: center;
 }
-.contenedorLed{
-    grid-column: 3;
-    grid-row: 2;
+
+
+.contenedorGrafico {
     width: 100%;
-    height: 100%;
+    display: flex;
     justify-content: center;
-    align-items: center;    
-    background-color: #fff;
 }
-.led {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #444;
-  border: 1px solid rgba(255,255,255,0.3);
-  transform: translate(-50%, -50%);
-  transition: all 0.15s ease;
-  box-shadow: 0 0 4px rgba(255,255,255,0.2);
-}
-#anillo-led-canvas{ 
-    color: #ffff;
-    display: block;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
+
+
+@media (max-width: 900px) {
+    .headerPrincipal {
+        grid-template-columns: 1fr;
+    }
+
+    .textoHeader {
+        text-align: center;
+    }
+
+    .contenedorGrafico {
+        margin-top: 20px;
+    }
 }
 
 
@@ -88,161 +69,155 @@ h1{
 
 
 
-.contenedorDatosActuales{
-    display: grid;
-    grid-template-columns: 350px 350px 350px;
-    grid-template-rows: 50px 150px 150px;
-    gap: 4%; 
-    row-gap: 15%;
-    justify-items: center; 
-    align-items: start; 
-    margin-top: 5%;
-    margin-bottom: 15%;
+
+
+
+
+
+
+.contenedorDatosActuales {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    width: min(90%, 1200px);
+    margin: 40px auto;
+    color: #fff;
     font-size: 18px;
     font-family: "Roboto Condensed", sans-serif;
+}
 
-}
 .datosActuales{
-    grid-column: 1;
-    grid-row: 1;
-    display: block;
-    color: #ffff;
+    text-align: center;
+    margin-bottom: 20px;
     font-size: 28px;
-    margin-top: 18%;
+    color: #ffff;
 }
+
+.gridDatos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .tarjetaTemperatura{
-    width: 100%;
-    grid-row: 2;
-    grid-column: 1;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
     background: linear-gradient(135deg, #a11c1c, #ff0000);
     color: #ffff;
-    height: 100%;
     font-family: 'Montserrat', sans-serif;
-    padding: 1rem;
-    border-radius: 20px;
-    text-align: center;
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;
     transition: transform 0.5s ease;
-    margin: 5%;
     font-size: 25px;
-
+    justify-content: center;  
 }
 .tarjetaTemperatura:hover{
     transform: scale(1.05);
 }
+
 .tarjetaHumedad{
-    width: 100%;
-    grid-column: 2;
-    grid-row: 2;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
     background: linear-gradient(135deg, rgba(122, 149, 172, 0.75), rgba(0, 47, 255, 0.75));
     color: #ffff;
-    height: 100%;
     font-family: 'Montserrat', sans-serif;
-    padding: 1rem;
-    border-radius: 20px;
-    text-align: center;
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;
-    margin: 5%;
     font-size: 25px;
     transition: transform 0.5s ease;
+    justify-content: center;  
 }
 .tarjetaHumedad:hover{
     transform: scale(1.05);
 }
- .tarjetaCalidad{
-    width: 100%;
-    grid-column: 3;
-    grid-row: 2;
+
+.tarjetaCalidad{
+    padding: 20px;
+    text-align: center;
     background: linear-gradient(135deg, rgba(115, 199, 118, 0.75), rgba(136, 255, 1, 0.75));
     color: #ffff;
-    height: 100%;
     font-family: 'Montserrat', sans-serif;
-    padding: 1rem;
     border-radius: 20px;
-    text-align: center;
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;
     transition: transform 0.5s ease;;
-    margin: 5%;
     font-size: 25px;
- }
- .tarjetaCalidad:hover{
+    justify-content: center;  
+}
+.tarjetaCalidad:hover{
     transform: scale(1.05);
- }
- .infoTemperatura{
-    padding: auto;
-    grid-column: 1;
-    grid-row: 3;
+}
+
+.contenedorInfoActual {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    width: min(90%, 1200px);
+    margin: 20px auto;
+    color: #fff;
+}
+
+.infoTemperatura{
+    padding: 20px;
+    text-align: center;
+    justify-content: center; 
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-style: normal;
     color: #ffff;
     background-color: rgba(9, 20, 32, 0.72);
-    border-radius: 16px;
+    border-radius: 20px;
     border: 1px solid #ffff;
-    box-shadow: inset 0 0 10px #108888;         
-    display: flex;
-    flex-direction: column;
-    justify-content: center;     
-    align-items: center;         
-    width: 100%;   
-    height: 100%;
-    margin: 5%;
+    box-shadow: inset 0 0 10px #108888;
     transition: transform 0.5s ease;;
- }
- .infoTemperatura:hover{
+}
+.infoTemperatura:hover{
     transform: scale(1.05);
- }
- .infoHumedad{
-    padding: auto;
-    grid-column: 2;
-    grid-row: 3;
+}
+
+.infoHumedad{
+    padding: 20px;
+    text-align: center;
+    justify-content: center; 
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-style: normal;
     color: #ffff;
     background-color: rgba(9, 20, 32, 0.72);
-    border-radius: 16px;
+    border-radius: 20px;
     border: 1px solid #ffff;
-    box-shadow: inset 0 0 10px #108888;           
-    display: flex;
-    flex-direction: column;
-    justify-content: center;     
-    align-items: center;         
-    width: 100%;   
-    height: 100%;
-    margin: 5%;
+    box-shadow: inset 0 0 10px #108888;
     transition: transform 0.5s ease;;
- }
- .infoHumedad:hover{
+}
+.infoHumedad:hover{
     transform: scale(1.05);
- }
- .infoCalidad{
-    padding: auto;
-    grid-column: 3;
-    grid-row: 3;
+}
+
+.infoCalidad{
+    padding: 20px;
+    text-align: center;
+    justify-content: center; 
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-style: normal;
     color: #ffff;
     background-color: rgba(9, 20, 32, 0.72);
-    border-radius: 16px;
+    border-radius: 20px;
     border: 1px solid #ffff;
-    box-shadow: inset 0 0 10px #108888;         
-    display: flex;
-    flex-direction: column;
-    justify-content: center;     
-    align-items: center;         
-    width: 100%;   
-    height: 100%;
-    margin: 5%;
+    box-shadow: inset 0 0 10px #108888;
     transition: transform 0.5s ease;;
- }
+}
 .infoCalidad:hover{
     transform: scale(1.05);
 }
+
 .aire-excelente{
     text-align: center;
 }
@@ -266,150 +241,164 @@ h1{
 
 
 
-.contenedorHistorial{
-    color: #ffff;
+
+.contenedorHistorial {
+    width: min(90%, 1200px);
+    margin: 60px auto;
+    color: #fff;
     background-color: rgba(0, 0, 0, 0.72);
     border-radius: 16px;
     border: 1px solid #ffff;
-    box-shadow: inset 0 0 10px #108888;  
-    display: grid;
-    width: 80%;
-    grid-template-columns: 1fr auto auto;  
+    box-shadow: inset 0 0 10px #108888;   
     align-items: center; 
-    gap: 3%; 
     font-family: 'Montserrat', sans-serif;
     padding: 10px 30px;             
     box-sizing: border-box;
     justify-content: space-between;
 }
 
-.tituloHistorial {  
-  color: #ffff;
-  font-size: 24px;
-  margin-left: 5%;
+.tituloHistorial {
+    text-align: center;
+    margin-bottom: 20px;
 }
-
-.botonHistorial {
+.botonHistorial{
+    background-color: rgba(9, 20, 32, 0.85);
+    border-radius: 10px;
     color: #ffff;
-    width: 100%; 
-    margin-right: 20px;
+    padding: 3px 5px;
+}
+.selectorHistorial{
+    color: #ffff;
     border-radius: 10px;
     padding: 3px 1px;
-    background-color: rgba(85, 150, 221, 0.418);
-}
-
-.selectorHistorial {
-    color: #ffff;
-    width: 100%; 
-    margin-right: 20px;
-    border-radius: 10px;
-    padding: 3px 1px;
-    background-color: rgba(85, 150, 221, 0.418);
-
+    background-color: rgba(9, 20, 32, 0.85);
 }
 
 
 
- .contenedorTablaHistorial{
-    justify-items: center; 
-    align-items: start; 
-    font-family: 'Montserrat', sans-serif;
+
+
+.contenedorTablaHistorial {
     width: 100%;
-    height: 110%;
-    margin-left: 15%;
-    margin-top: 1%;
- }
+    display: flex;
+    justify-content: center;
+    align-items: start; 
+    color: #ffff;
+    font-size: 24px;
+    font-family: 'Montserrat', sans-serif;
+}
 
-
-.tablaHistorial{
-    width: 80%;               
-    border-collapse: separate; /* Permite redondear bordes */
-    border-spacing: 0;         /* Quita el espacio entre celdas */
+.tablaHistorial {
+    width: 100%;
+    max-width: 700px;
+    border-collapse: separate; 
+    border-spacing: 0;         
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
-    overflow: hidden;          /* Para que se redondeen bien las esquinas */
-    background-color: rgba(9, 20, 32, 0.85); /* Fondo similar a tu estilo */
+    overflow: hidden;          
+    background-color: rgba(9, 20, 32, 0.85); 
     color: #fff;
     box-shadow: 0 0 15px rgb(255, 255, 255);
     font-family: Arial, sans-serif;
-    background-color: rgba(85, 150, 221, 0.418);
-    height: 80%;
-    margin-top: 10%;
 
+    padding: 12px;
 }
 
-td {
+
+td{
     border: 1px solid #ccc;  
     border-radius: 0 px 0 px 10 px 10px;  
-    padding: 10px;             
-    text-align: left;          
-}
-th{
-    background: rgba(32, 72, 116, 0.85);
-    height: 100%;
-    width: auto;
-    padding: 0.5rem;
-}
-.contenedorGrafico{
-    justify-items: center; 
-    align-items: center; 
-    font-family: 'Montserrat', sans-serif;
-    width: 80%;
-    height: 110%;
-    margin-top: 1%;
+    padding: 12px;             
+    text-align: left; 
     background-color: rgba(9, 20, 32, 0.85);
-    color:white;
-    border-radius: 16px;
-    box-shadow: 0 0 15px rgb(255, 255, 255);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+th{
+    background-color: rgba(9, 20, 32, 0.85);
+    padding: 12px;
+    text-align: center;
 }
 
 
+.tablaHistorial tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.05);
+}
 
 
+@media (max-width: 850px) {
 
+    .contenedorTablaHistorial {
+        overflow-x: auto;      
+        padding: 0 10px;       
+    }
 
+    .tablaHistorial {
+        min-width: 600px;      
+        font-size: 16px;       
+    }
 
+    th, td {
+        padding: 8px;          
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-.contenedorConocenos{
-    color: #ffff;
+.contenedorGrafico {
     display: grid;
-    grid-template-columns: 250px 250px 250px;
-    grid-template-rows: 80px 200px;
-    margin-top: 10%;
+    place-items: center; 
     font-family: 'Montserrat', sans-serif;
-    column-gap: 14%;
-    margin-right: 15%;
+    width: min(90%, 1200px); 
+    max-width: 1100px;
+    margin: 20px auto; 
+    padding: 20px; 
+    background-color: rgba(9, 20, 32, 0.85);
+    color: white;
+    border-radius: 16px;
+    border: 1px solid #ffff;
+    box-shadow: inset 0 0 10px #108888;
+    height: auto; 
+    box-sizing: border-box;
 }
 
-.conocenos{
-    grid-column: 1;
-    grid-row: 1;
-    display: block;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.contenedorConocenos {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+}
+
+.conocenos {
+    font-size: 2rem;
+    margin-bottom: 20px;
     transition: transform 0.5s ease;;
 }
 .conocenos:hover{
     transform: scale(1.05);
 }
 
-.quienesSomos{
-    grid-column: 1;
-    grid-row: 2;
+.infoConocenos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px;
     width: 100%;
-    height: 100%;
-    margin-top: 5%;
+    margin-top: 20px;
+    padding: 15px;
+}
+
+.quienesSomos{
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -427,11 +416,6 @@ th{
 }
 
 .comoHicimos{
-    grid-column: 2;
-    grid-row: 2;
-    width: 100%;
-    height: 100%;
-    margin-top: 5%;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -449,12 +433,6 @@ th{
 }
 
 .comoFunciona{
-    grid-column: 3;
-    grid-row: 2;
-    width: 100%;
-    height: 100%;
-    padding: 0.5rem;
-    margin-top: 5%;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -472,9 +450,52 @@ th{
 }
 
 
+@media (max-width: 900px) {
+    .infoConocenos {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+@media (max-width: 600px) {
+    .infoConocenos {
+        grid-template-columns: 1fr; 
+    }
+
+    .infoConocenos div {
+        margin-bottom: 15px;
+    }
+}
 
 
 
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .tarjetaTemperatura, 
+    .tarjetaHumedad,
+    .tarjetaCalidad,
+    .infoTemperatura,
+    .infoHumedad,
+    .infoCalidad {
+        font-size: 18px;
+    }
+
+    .tablaHistorial {
+        font-size: 14px;
+    }
+}
 
 
 
@@ -488,13 +509,27 @@ th{
 
 footer{
     width: 100%;
-    height: 30px;
-    margin-top: 5%;
-    margin-bottom: 0%;
+    padding: 15px 10px;
+    margin-top: 40px;
     text-align: center;
+
     font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    color: #000000;
-    background:linear-gradient(500deg, rgba(0,0,0) , rgba(255, 255, 255)) ;
+    font-size: 1rem;
+    color: #ffffff;
+
+    background: linear-gradient(180deg, #07121e, #0c1f33);
+    border-top: 1px solid #0affd9;
+    box-shadow: 0 -4px 15px rgba(16, 136, 136, 0.4);
+    border-radius: 10px;
+}
+
+footer p{
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    footer {
+        font-size: 0.9rem;
+        padding: 12px 5px;
+    }
 }

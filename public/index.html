@@ -11,48 +11,65 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
 </head>
 <body>
-    <header>
-        <h1>Monitor de Calidad de Aire con ESP32</h1>
-        <p class="descripcion">Visualiza en tiempo real la temperatura, humedad y calidad de aire capturada con tu sensor ES32. Diseñado para pruuebas rápidas y despliegues de campo. </p>
-        <div class="contenedorUltimaLectura">
-            <p>
-                Ultima actualización: <span class="ultimaActualizacion">--</span>
-            </p>
+    <header class="headerPrincipal">
+        <div class="textoHeader">
+            <h1>Monitor de Calidad de Aire con ESP32</h1>
+            <p class="descripcion">Visualiza en tiempo real la temperatura, humedad y calidad de aire capturada con tu sensor ES32. Diseñado para pruuebas rápidas y despliegues de campo. </p>
+            <div class="contenedorUltimaLectura">
+                <p>
+                    Ultima actualización: <span class="ultimaActualizacion">--</span>
+                </p>
+            </div>
         </div>
-        <div class="contenedorLed">
-            <canvas id="anillo-led-canvas"><p>Calidad de Aire</p></canvas>
+        <div class="contenedorGrafico">
+            <div class="contenedorAnilloLedTemperatura">
+                
+            </div>
+            <div class="contenedorAnilloLedHumedad">
+                
+            </div>
+            <div class="contenedorAnilloLedCalidad">
+                
+            </div>
         </div>
         
     </header>
 
     <section class="contenedorDatosActuales">
-        <h2 class="datosActuales">Datos Actuales</h2>
-        <div class="tarjetaTemperatura">
-            <h3 class="temperatura">Temperatura</h3>
-            
-            <span class="indicadorTemperatura" id="temperatura">1</span><span>°C</span>
-        </div>
-        <div class="infoTemperatura">
-            <h4 class="tituloInfoTemperatura">ESTADO ACTUAL</h4>
-            <p>El aire es <span class="estado-aire" id="estado-aire"></span></p>
-        </div>
+        <h2 class="datosActuales">Datos Actuales</h2> 
+        <div class="gridDatos">
+            <div class="grupo">
+                <div class="tarjetaTemperatura">
+                    <h3 class="temperatura">Temperatura</h3>
+                    <span class="indicadorTemperatura" id="temperatura">1</span><span>°C</span>
+                </div>
+                <div class="infoTemperatura">
+                    <h4 class="tituloInfoTemperatura">ESTADO ACTUAL</h4>
+                    <p>El aire es <span class="estado-aire" id="estado-aire"></span></p>
+                </div>
+            </div>
 
-        <div class="tarjetaHumedad">
-            <h3 class="humedad">Humedad</h3>
-            <span class="indicadorHumedad" id="humedad">--</span><span>%</span>
-        </div>
-        <div class="infoHumedad">
-            <h4 class="tituloInfoHumedad">PEDIODO DE ACTUALIZACIÓN</h4>
-            <p>Cada 5 segundos.</p>
-        </div>
+            <div class="grupo">
+                <div class="tarjetaHumedad">
+                    <h3 class="humedad">Humedad</h3>
+                    <span class="indicadorHumedad" id="humedad">--</span><span>%</span>
+                </div>
+                <div class="infoHumedad">
+                    <h4 class="tituloInfoHumedad">PEDIODO DE ACTUALIZACIÓN</h4>
+                    <p>Cada 5 segundos.</p>
+                </div>
+            </div>
 
-        <div class="tarjetaCalidad">
-            <h3 class="calidad">Calidad</h3>
-            <span class="indicadorCalidad" id="calidad_aire">--</span><span>AQI</span>
-        </div>
-        <div class="infoCalidad">
-            <h4 class="tituloInfoCalidad">SENSORES Y DISPOSITIVOS</h4>
-            <p>ESP32 + DHT22 + MQ135.</p>
+            <div class="grupo">
+                <div class="tarjetaCalidad">
+                    <h3 class="calidad">Calidad</h3>
+                    <span class="indicadorCalidad" id="calidad_aire">--</span><span>AQI</span>
+                </div>
+                <div class="infoCalidad">
+                    <h4 class="tituloInfoCalidad">SENSORES Y DISPOSITIVOS</h4>
+                    <p>ESP32 + DHT22 + MQ135.</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -97,19 +114,28 @@
 
     <section class="contenedorConocenos">
         <h2 class="conocenos">Conocenos</h2>
-        <div class="quienesSomos">
-            <h3>¿Quienes somos?</h3> 
-            <p>Somos un grupo de estudiantes de la escuela Tomas Alva Edison, estamos haciendo nuestras pasantias en la empresa Wakapi. </p>
-        </div>
 
-        <div class="comoHicimos">
-            <h3>¿Como hicimos el proyecto?</h3>
-            <p>Lo primero que hicimos fue dividir tareas. Luego empezamos a trabajar</p>
-        </div>
+        <div class="infoConocenos">
+            <div class="quienesSomos">
+                <h3>¿Quienes somos?</h3> 
+                <p>
+                    Somos estudiantes de la Escuela Tomas Alva Edison realizando nuestras pasantías en Wakapi. Nos interesa la tecnología y trabajamos en equipo para aprender y desarrollar proyectos reales.
+                </p>
+            </div>
 
-        <div class="comoFunciona">
-            <h3>¿Como funciona el proyecto?</h3>
-            <p>El sensor ESP32 manda a la página lo que toma los sensores, y mediante un servidor mandamos todo a la página web.</p>
+            <div class="comoHicimos">
+                <h3>¿Como hicimos el proyecto?</h3>
+                <p>
+                    Repartimos tareas según nuestras habilidades: Joaquín y Rodrigo hicieron el front-end, y Cayetano desarrolló el firmware del ESP32. Usamos Git, Trello y Teams para organizarnos y coordinarnos.
+                </p>
+            </div>
+
+            <div class="comoFunciona">
+                <h3>¿Como funciona el proyecto?</h3>
+                <p>
+                    El ESP32 toma datos del DHT22 y del MQ135, los envía por WiFi al backend y la web los actualiza en tiempo real para mostrar temperatura, humedad y calidad del aire.
+                </p>
+            </div>
         </div>
     </section>
     
