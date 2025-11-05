@@ -11,16 +11,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
 </head>
 <body>
-    <header>
-        <h1>Monitor de Calidad de Aire con ESP32</h1>
-        <p class="descripcion">Visualiza en tiempo real la temperatura, humedad y calidad de aire capturada con tu sensor ES32. Diseñado para pruuebas rápidas y despliegues de campo. </p>
-        <div class="contenedorUltimaLectura">
-            <p>
-                Ultima actualización: <span class="ultimaActualizacion">--</span>
-            </p>
+    <header class="headerPrincipal">
+        <div class="textoHeader">
+            <h1>Monitor de Calidad de Aire con ESP32</h1>
+            <p class="descripcion">Visualiza en tiempo real la temperatura, humedad y calidad de aire capturada con tu sensor ES32. Diseñado para pruuebas rápidas y despliegues de campo. </p>
+            <div class="contenedorUltimaLectura">
+                <p>
+                    Ultima actualización: <span class="ultimaActualizacion">--</span>
+                </p>
+            </div>
         </div>
         <div class="contenedorGrafico">
-            <div class="contenedorAnilloLed">
+            <div class="contenedorAnilloLedTemperatura">
+                
+            </div>
+            <div class="contenedorAnilloLedHumedad">
+                
+            </div>
+            <div class="contenedorAnilloLedCalidad">
                 
             </div>
         </div>
@@ -109,17 +117,23 @@
         <div class="infoConocenos">
             <div class="quienesSomos">
                 <h3>¿Quienes somos?</h3> 
-                <p>Somos un grupo de estudiantes de la escuela Tomas Alva Edison, estamos haciendo nuestras pasantias en la empresa Wakapi. </p>
+                <p>
+                    Somos estudiantes de la Escuela Tomas Alva Edison realizando nuestras pasantías en Wakapi. Nos interesa la tecnología y trabajamos en equipo para aprender y desarrollar proyectos reales.
+                </p>
             </div>
 
             <div class="comoHicimos">
                 <h3>¿Como hicimos el proyecto?</h3>
-                <p>Lo primero que hicimos fue dividir tareas. Luego empezamos a trabajar</p>
+                <p>
+                    Repartimos tareas según nuestras habilidades: Joaquín y Rodrigo hicieron el front-end, y Cayetano desarrolló el firmware del ESP32. Usamos Git, Trello y Teams para organizarnos y coordinarnos.
+                </p>
             </div>
 
             <div class="comoFunciona">
                 <h3>¿Como funciona el proyecto?</h3>
-                <p>El sensor ESP32 manda a la página lo que toma los sensores, y mediante un servidor mandamos todo a la página web.</p>
+                <p>
+                    El ESP32 toma datos del DHT22 y del MQ135, los envía por WiFi al backend y la web los actualiza en tiempo real para mostrar temperatura, humedad y calidad del aire.
+                </p>
             </div>
         </div>
     </section>
