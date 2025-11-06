@@ -12,17 +12,19 @@ body {
 }
 
 .headerPrincipal{
-    width: 100%;
+    width: 70%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /*grid-template-columns: 1fr;*/
+    margin: auto;
     color: #fff;
-    align-items: center;
+
     padding: 40px;
     gap: 40px;
 }
 
 .textoHeader{
-    text-align: left;
+    align-items: center;
+    text-align: center;
 }
 
 .contenedorUltimaLectura{
@@ -35,14 +37,18 @@ body {
     border: 1px solid #ffff;
     box-shadow: inset 0 0 10px #108888;
     text-align: center;
+    align-items: center;
 }
 
 
-.contenedorLed {
+.contenedorLed{
     width: 100%;
     height: 100%;
-    grid-column: 2;
-    grid-row: 1;
+    display: flex;              
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;   
+
 }
 #anillo-aire-canvas {
     color: rgb(255, 255, 255);
@@ -77,6 +83,7 @@ body {
   background-color: #1b1b1b;
   box-shadow: 0 0 5px #000;
   transition: background-color 0.4s, box-shadow 0.4s;
+  
 }
 .tituloLedAire{
     text-align: center;
@@ -131,26 +138,27 @@ body {
     margin-bottom: 20px;
     width: 220px;
     height: 220px;
-    margin-left: 20%;
 }
 @media (max-width: 900px) {
     .headerPrincipal {
-        grid-template-columns: 1fr;
-    }
-
-    .textoHeader {
+        margin: 0 auto !important;     /* ✅ Fuerza centrado */
+        padding-left: 0 !important;    /* ✅ Evita que algo empuje a la derecha */
+        padding-right: 0 !important;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;           /* ✅ Centra todo verticalmente */
         text-align: center;
     }
 
-    .contenedorGrafico {
-        margin-top: 20px;
-    }
     .contenedorLed {
-        grid-column: 1;
-        grid-row: 2;
+        width: 100%;
         display: flex;
-        justify-content: center;
-        margin-top: 20px;
+        justify-content: center !important; /* ✅ Centra los anillos */
+        align-items: center;
+    }
+
+    .Aire, .Temp, .Hum {
+        margin-left: 0 !important;     /* ✅ Quita desplazamientos raros */
     }
     #anillo-hum-canvas {
         margin-left: 0;
