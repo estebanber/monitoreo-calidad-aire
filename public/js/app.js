@@ -1,18 +1,24 @@
+// ===== Config =====
 const API_BASE = '/api';
 const INTERVALO_ACTUALIZACION = 10000;
 
+// ===== Estado =====
 let intervaloDatos = null;
 let grafico = null;
 
+// Utils DOM
 const $ = (sel) => document.querySelector(sel);
 const setText = (sel, txt) => { const el = $(sel); if (el) el.textContent = txt; };
 
+// ===== Inicio =====
 document.addEventListener('DOMContentLoaded', () => {
   inicializarGrafico();
   iniciarActualizacionAutomatica();
   cargarDatosIniciales();
 });
+window.addEventListener('load', crearAnillos); // crea los 3 anillos al cargar
 
+// ===== Flujo de datos =====
 async function cargarDatosIniciales() {
   await cargarDatosActuales();
   await cargarEstadisticas();
@@ -42,7 +48,10 @@ function actualizarInterfazDatos(data) {
   setText('.indicadorTemperatura', Number(data.temperatura).toFixed(1));
   setText('.indicadorHumedad', Number(data.humedad).toFixed(1));
   setText('.indicadorCalidad', data.calidad_aire);
-  actualizarAnillo(data.calidad_aire);
+
+  actualizarAnillo('aire', data.calidad_aire);
+  actualizarAnillo('temp', data.temperatura);
+  actualizarAnillo('hum',  data.humedad);
 
   const estado = obtenerEstadoAire(data.calidad_aire);
   const elEstado = document.getElementById('estado-aire');
@@ -51,16 +60,30 @@ function actualizarInterfazDatos(data) {
     elEstado.className = `estado-aire ${estado.clase}`;
   }
 
-  const fecha = new Date(data.timestamp);
-  setText('.ultimaActualizacion', fecha.toLocaleString('es-AR'));
+  const t = new Date(data.timestamp).toLocaleTimeString('es-AR');
+
+  // Protecciones por si no existen gráficos separados
+  if (typeof chartTemp !== 'undefined' && chartTemp) {
+    chartTemp.data.labels.push(t);
+    chartTemp.data.datasets[0].data.push(Number(data.temperatura));
+    if (chartTemp.data.labels.length > 100) { chartTemp.data.labels.shift(); chartTemp.data.datasets[0].data.shift(); }
+    chartTemp.update();
+  }
+  if (typeof chartHum !== 'undefined' && chartHum) {
+    chartHum.data.labels.push(t);
+    chartHum.data.datasets[0].data.push(Number(data.humedad));
+    if (chartHum.data.labels.length > 100) { chartHum.data.labels.shift(); chartHum.data.datasets[0].data.shift(); }
+    chartHum.update();
+  }
 }
 
+// ===== UI helpers =====
 function obtenerEstadoAire(v) {
   if (v < 360) return { texto: 'excelente, que buen momento para respirar', clase: 'aire-excelente' };
-  if (v < 520) return { texto: 'bueno, no hay riesgo', clase: 'aire-bueno' };
-  if (v < 680) return { texto: 'moderado, precaucion', clase: 'aire-moderado' };
-  if (v < 840) return { texto: 'malo, alejarse', clase: 'aire-malo' };
-  return { texto: 'muy malo, alejarse rapidamente', clase: 'aire-muy-malo' };
+  if (v < 520) return { texto: 'bueno, no hay riesgo',                      clase: 'aire-bueno' };
+  if (v < 680) return { texto: 'moderado, precaucion',                      clase: 'aire-moderado' };
+  if (v < 840) return { texto: 'malo, alejarse',                            clase: 'aire-malo' };
+  return { texto: 'muy malo, alejarse rapidamente',                         clase: 'aire-muy-malo' };
 }
 
 function mostrarSinDatos() {
@@ -77,6 +100,7 @@ function mostrarErrorConexion() {
   if (el) el.style.color = '#e74c3c';
 }
 
+// ===== Historial + tabla + gráfico combinado =====
 async function cargarHistorial() {
   const limite = document.getElementById('limite-registros')?.value ?? 50;
   try {
@@ -132,8 +156,8 @@ async function cargarEstadisticas() {
     const r = await fetch(`${API_BASE}/estadisticas`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const s = await r.json();
-    setText('.total-lecturas', s.total_lecturas ?? 0);
-    setText('.temp-promedio', s.temp_promedio != null ? Number(s.temp_promedio).toFixed(1) : '--');
+    setText('.total-lecturas',   s.total_lecturas ?? 0);
+    setText('.temp-promedio',    s.temp_promedio != null ? Number(s.temp_promedio).toFixed(1) : '--');
     setText('.humedad-promedio', s.humedad_promedio != null ? Number(s.humedad_promedio).toFixed(1) : '--');
   } catch {}
 }
@@ -148,8 +172,8 @@ function inicializarGrafico() {
     data: {
       labels: [],
       datasets: [
-        { label: 'Temperatura (°C)', borderColor: 'red', data: [], fill: true, tension: 0.1 },
-        { label: 'Humedad (%)', borderColor: 'blue', data: [], fill: true, tension: 0.1 },
+        { label: 'Temperatura (°C)',       borderColor: 'red',   data: [], fill: true, tension: 0.1 },
+        { label: 'Humedad (%)',            borderColor: 'blue',  data: [], fill: true, tension: 0.1 },
         { label: 'Calidad del Aire (AQI)', borderColor: 'green', data: [], fill: true, tension: 0.1 }
       ]
     },
@@ -169,113 +193,126 @@ if (limiteEl) limiteEl.addEventListener('change', cargarHistorial);
 window.addEventListener('beforeunload', () => {
   if (intervaloDatos) clearInterval(intervaloDatos);
 });
-// ===== Anillo LED con transición progresiva (de 24 a 1) =====
+
+// ===== 3 anillos en Canvas (aire, temp, hum) =====
 const RING_LEDS = 24;
-let ringCanvas, ringCtx, leds = [];
-let colorObjetivo = { r: 0, g: 255, b: 106 };
-let animando = false;
+let RINGS = {};
 
-function crearAnillo() {
-  ringCanvas = document.getElementById('anillo-led-canvas');
-  if (!ringCanvas) return;
-  ringCtx = ringCanvas.getContext('2d');
+function crearAnillos() {
+  const ids = ['aire', 'temp', 'hum'];
+  ids.forEach(id => {
+    const cv = document.getElementById(`anillo-${id}-canvas`);
+    if (cv) RINGS[id] = crearRing(cv);
+  });
+  dibujarTodos();
+}
 
-  const w = ringCanvas.width, h = ringCanvas.height;
+function crearRing(canvas) {
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
   const cx = w / 2, cy = h / 2;
-  const r = Math.min(cx, cy) - 16;
+  const r  = Math.min(cx, cy) - 16;
   const ledR = 9;
 
-  leds = Array.from({ length: RING_LEDS }, (_, i) => {
+  const leds = Array.from({ length: RING_LEDS }, (_, i) => {
     const ang = (i / RING_LEDS) * 2 * Math.PI;
     return {
       x: cx + r * Math.cos(ang),
       y: cy + r * Math.sin(ang),
       color: { r: 0, g: 255, b: 106 },
-      progreso: 0,
-      activo: false
+      progreso: 0
     };
   });
 
-  dibujarAnillo();
+  return { ctx, cx, cy, r, ledR, leds, colorObjetivo: { r: 0, g: 255, b: 106 }, animando: false };
 }
 
-function actualizarAnillo(aqiRaw) {
-  const aqi = Number(aqiRaw) || 0;
-  colorObjetivo = colorForAQI(aqi);
-  if (!animando) {
-    animando = true;
-    startWave(RING_LEDS - 1);
+function actualizarAnillo(tipo, valor) {
+  const ring = RINGS[tipo];
+  if (!ring) return;
+
+  const target = colorForValor(tipo, valor);
+  ring.colorObjetivo = target;
+
+  if (!ring.animando) {
+    ring.animando = true;
+    startWave(ring, RING_LEDS - 1);
   }
 }
 
-function startWave(index) {
-  if (index < 0) { animando = false; return; }
-
-  const L = leds[index];
-  L.activo = true;
-  L.progreso += 0.2;
+function startWave(ring, index) {
+  if (index < 0) { ring.animando = false; return; }
+  const L = ring.leds[index];
+  const goal = ring.colorObjetivo;
+  L.progreso = 0;
 
   const intervalo = setInterval(() => {
     L.progreso += 0.05;
-    L.color.r += (colorObjetivo.r - L.color.r) * 0.2;
-    L.color.g += (colorObjetivo.g - L.color.g) * 0.2;
-    L.color.b += (colorObjetivo.b - L.color.b) * 0.2;
-
-    dibujarAnillo();
+    L.color.r += (goal.r - L.color.r) * 0.2;
+    L.color.g += (goal.g - L.color.g) * 0.2;
+    L.color.b += (goal.b - L.color.b) * 0.2;
+    dibujarRing(ring);
 
     if (L.progreso >= 1) {
       clearInterval(intervalo);
-      startWave(index - 1); // pasa al siguiente LED
+      startWave(ring, index - 1);
     }
   }, 20);
 }
 
-function dibujarAnillo() {
-  if (!ringCtx) return;
-  const { width: w, height: h } = ringCanvas;
-  ringCtx.clearRect(0, 0, w, h);
+function dibujarTodos() {
+  Object.values(RINGS).forEach(ring => dibujarRing(ring));
+}
 
-  const cx = w / 2, cy = h / 2;
-  const r = Math.min(cx, cy) - 16;
-  const ledR = 9;
+function dibujarRing(ring) {
+  const ctx = ring.ctx;
+  const W = ctx.canvas.width;
+  const H = ctx.canvas.height;
 
-  const fondo = ringCtx.createRadialGradient(cx, cy, 0, cx, cy, r);
+  ctx.clearRect(0, 0, W, H);
+
+  const fondo = ctx.createRadialGradient(ring.cx, ring.cy, 0, ring.cx, ring.cy, ring.r);
   fondo.addColorStop(0, '#0d1b2a');
   fondo.addColorStop(1, '#000');
-  ringCtx.fillStyle = fondo;
-  ringCtx.beginPath();
-  ringCtx.arc(cx, cy, r + 14, 0, Math.PI * 2);
-  ringCtx.fill();
+  ctx.fillStyle = fondo;
+  ctx.beginPath();
+  ctx.arc(ring.cx, ring.cy, ring.r + 14, 0, Math.PI * 2);
+  ctx.fill();
 
-  for (const L of leds) {
+  for (const L of ring.leds) {
     const c = `rgb(${L.color.r|0},${L.color.g|0},${L.color.b|0})`;
-    ringCtx.shadowColor = c;
-    ringCtx.shadowBlur = 10;
-    ringCtx.fillStyle = c;
-    ringCtx.beginPath();
-    ringCtx.arc(L.x, L.y, ledR, 0, Math.PI * 2);
-    ringCtx.fill();
-    ringCtx.shadowBlur = 0;
+    ctx.shadowColor = c;
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = c;
+    ctx.beginPath();
+    ctx.arc(L.x, L.y, ring.ledR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
   }
 }
 
-function colorForAQI(aqi) {
-  const stops = [
-    { aqi: 0,   c:{ r: 0, g:255, b:106 } },
-    { aqi: 360, c:{ r:32, g:174, b:91 } },
-    { aqi: 520, c:{ r:255, g:204, b:0 } },
-    { aqi: 680, c:{ r:255, g:119, b:0 } },
-    { aqi: 840, c:{ r:255, g:25, b:0 } }
-  ];
-  let i = 0; while (i < stops.length - 1 && aqi > stops[i + 1].aqi) i++;
-  const s0 = stops[i], s1 = stops[i + 1] || s0;
-  const t = (aqi - s0.aqi) / Math.max(1, s1.aqi - s0.aqi);
-  return {
-    r: s0.c.r + (s1.c.r - s0.c.r) * t,
-    g: s0.c.g + (s1.c.g - s0.c.g) * t,
-    b: s0.c.b + (s1.c.b - s0.c.b) * t
-  };
+function colorForValor(tipo, v) {
+  if (tipo === 'aire') {
+    if (v < 360) return { r: 0, g: 255, b: 4 };
+    if (v < 520) return { r: 81, g: 255, b: 0 };
+    if (v < 680) return { r: 157, g: 255, b: 0 };
+    if (v < 840) return { r: 255, g: 93, b: 0 };
+    return { r: 255, g: 0, b: 0 };
+  }
+  if (tipo === 'temp') {
+    if (v < 10) return { r: 0 , g: 251, b: 255 };
+    if (v < 20) return { r: 4, g: 159, b: 226 };
+    if (v < 30) return { r: 1, g: 100, b: 228 };
+    return { r: 76, g: 0, b: 230 };
+  }
+  if (tipo === 'hum') {
+    if (v < 30) return { r: 240, g: 0, b: 144 };
+    if (v < 50) return { r: 204, g: 0, b: 122 };
+    if (v < 70) return { r: 179, g: 0, b: 143 };
+    return { r: 136, g: 2, b: 130 };
+  }
+  return { r: 255, g: 255, b: 255 };
 }
 
-window.addEventListener('load', crearAnillo);
-window.ringTest = (v) => actualizarAnillo(v);
+// Test manual desde consola: ringTest('aire', 700)
+window.ringTest = (t, val) => actualizarAnillo(t, val);

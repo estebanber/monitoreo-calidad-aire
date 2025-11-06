@@ -44,15 +44,95 @@ body {
     grid-column: 2;
     grid-row: 1;
 }
-#anillo-led-canvas {
+#anillo-aire-canvas {
     color: rgb(255, 255, 255);
-    display: block;
-    width: 250px;
-    height: 250px;
-    border-radius: 80%;
+    display: inline-block;
+    width: 220px;
+    height: 220px;
+    border-radius: 100%;
     margin-top: 5%;
 }
-
+#anillo-temp-canvas {
+    color: rgb(255, 255, 255);
+    display: inline-block;
+    width: 220px;
+    height: 220px;
+    border-radius: 100%;
+    margin-top: 5%;
+}
+#anillo-hum-canvas {
+    color: rgb(255, 255, 255);
+    display: inline-block;
+    width: 220px;
+    height: 220px;
+    border-radius: 100%;
+    margin-top: 5%;
+    
+}
+.led {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #1b1b1b;
+  box-shadow: 0 0 5px #000;
+  transition: background-color 0.4s, box-shadow 0.4s;
+}
+.tituloLedAire{
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    color: #ffffff;
+    margin-top: 10px;
+    display: inline-block;
+}
+.tituloLedTemp{
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    color: #ffffff;
+    margin-top: 10px;
+    display: inline-block;
+}
+.tituloLedHum{
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    color: #ffffff;
+    margin-top: 10px;
+    display: inline-block;
+}
+.Aire{
+    display: inline-block;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 220px;
+    height: 220px;
+    text-align: center;
+}
+.Temp{
+    display: inline-block;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 220px;
+    height: 220px;
+    text-align: center;
+}
+.Hum{
+    display: inline-block;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+    width: 220px;
+    height: 220px;
+    margin-left: 20%;
+}
 @media (max-width: 900px) {
     .headerPrincipal {
         grid-template-columns: 1fr;
@@ -65,6 +145,27 @@ body {
     .contenedorGrafico {
         margin-top: 20px;
     }
+    .contenedorLed {
+        grid-column: 1;
+        grid-row: 2;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    #anillo-hum-canvas {
+        margin-left: 0;
+        width: 180px;
+        height: 180px;
+    }
+    #anillo-temp-canvas {
+        width: 180px;
+        height: 180px;
+    }
+    #anillo-aire-canvas {
+        width: 180px;
+        height: 180px;
+    }
+
 }
 
 
