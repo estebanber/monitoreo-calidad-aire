@@ -16,7 +16,9 @@ const char* ssid = "Wakapi-Staff";
 const char* password = "Network!2019";
 const char* serverURL = "http://192.168.48.238:3000/api/datos";
 
-float calidadSuavizada = 100.0;  // Valor inicial
+unsigned long previousMillis = 0;
+const unsigned long interval = 45000;
+int modoActual = 0;  // 0 = calidad aire, 1 = temperatura, 2 = humedad
 
 void setup() {
   Serial.begin(115200);
@@ -48,35 +50,94 @@ void loop() {
   Serial.print(t);
   Serial.print(" °C   Humedad: ");
   Serial.print(h);
-  Serial.print("%   Air: ");
+  Serial.print("%   Calidad Aire: ");
   Serial.println(airValue);
 
-  actualizarLEDs(airValue);
+  unsigned long currentMillis = millis();
+
+  if (modoActual == 0) {
+    actualizarLEDsCalidad(airValue);
+  } else if (modoActual == 1) {
+    actualizarLEDsTemperatura(t);
+  } else {
+    actualizarLEDsHumedad(h);
+  }
+
   enviarDatos(t, h, airValue);
+
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    animacionArcoiris(5000);
+    modoActual = (modoActual + 1) % 3;
+  }
 
   delay(200);
 }
 
-void actualizarLEDs(int airValue) {
+void actualizarLEDsCalidad(int airValue) {
   airValue = constrain(airValue, 200, 1000);
   float calidad = map(airValue, 200, 1000, 100, 0);
 
-  calidadSuavizada = calidadSuavizada * 0.93 + calidad * 0.07;
+  for (int i = 0; i < NUM_LEDS; i++) {
+    float nivel = (float)i / (NUM_LEDS - 1) * 100;
+    if (nivel <= calidad) {
+      int r = map(nivel, 0, 100, 0, 255);
+      int g = 255;
+      int b = 0;
+      strip.setPixelColor(i, strip.Color(r, g, b));
+    } else {
+      strip.setPixelColor(i, strip.Color(255, 0, 0));
+    }
+  }
+  strip.show();
+}
+
+void actualizarLEDsTemperatura(float temp) {
+  temp = constrain(temp, 0, 40);
+  float porcentaje = map(temp, 0, 40, 0, 100);
 
   for (int i = 0; i < NUM_LEDS; i++) {
     float nivel = (float)i / (NUM_LEDS - 1) * 100;
-    if (nivel <= calidadSuavizada) {
-      strip.setPixelColor(i, strip.Color(0, 255, 0));
+
+    if (nivel <= porcentaje) {
+      strip.setPixelColor(i, strip.Color(255, 255, 0));
     } else {
-      float factor = (nivel - calidadSuavizada) / (100.0 / NUM_LEDS);
-      factor = constrain(factor, 0, 1);
-      int r = map(factor * 100, 0, 100, 255, 255);
-      int g = map(factor * 100, 0, 100, 255, 0);
-      strip.setPixelColor(i, strip.Color(r, g, 0));
+      strip.setPixelColor(i, strip.Color(0, 0, 255));
     }
   }
 
   strip.show();
+}
+
+void actualizarLEDsHumedad(float hum) {
+  hum = constrain(hum, 0, 100);
+  float porcentaje = map(hum, 0, 100, 0, 100);
+
+  for (int i = 0; i < NUM_LEDS; i++) {
+    float nivel = (float)i / (NUM_LEDS - 1) * 100;
+
+    if (nivel <= porcentaje) {
+      strip.setPixelColor(i, strip.Color(157, 0, 255));
+    } else {
+      strip.setPixelColor(i, strip.Color(255, 0, 100));
+    }
+  }
+
+  strip.show();
+}
+
+void animacionArcoiris(int duracion) {
+  unsigned long start = millis();
+  while (millis() - start < duracion) {
+    for (int j = 0; j < 256; j++) {
+      for (int i = 0; i < NUM_LEDS; i++) {
+        int pixelHue = (i * 256 / NUM_LEDS + j) & 255;
+        strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue * 256)));
+      }
+      strip.show();
+      delay(20);
+    }
+  }
 }
 
 void enviarDatos(float temp, float hum, int air) {
@@ -92,11 +153,8 @@ void enviarDatos(float temp, float hum, int air) {
     int code = http.POST(json);
     Serial.print("HTTP: ");
     Serial.println(code);
-
     http.end();
   } else {
     Serial.println("No conectado a WiFi");
   }
 }
-
-
