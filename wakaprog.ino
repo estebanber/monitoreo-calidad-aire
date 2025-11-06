@@ -8,7 +8,6 @@
 DHT dht(DHTPIN, DHTTYPE);
 
 #define MQ135_PIN 34
-
 #define LED_PIN 18
 #define NUM_LEDS 24
 Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -16,6 +15,8 @@ Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 const char* ssid = "Wakapi-Staff";
 const char* password = "Network!2019";
 const char* serverURL = "http://192.168.48.238:3000/api/datos";
+
+float calidadSuavizada = 100.0;  // Valor inicial
 
 void setup() {
   Serial.begin(115200);
@@ -59,13 +60,15 @@ void loop() {
 void actualizarLEDs(int airValue) {
   airValue = constrain(airValue, 200, 1000);
   float calidad = map(airValue, 200, 1000, 100, 0);
-  int ledsVerdes = map(calidad, 0, 100, 0, NUM_LEDS);
+
+  calidadSuavizada = calidadSuavizada * 0.93 + calidad * 0.07;
 
   for (int i = 0; i < NUM_LEDS; i++) {
     float nivel = (float)i / (NUM_LEDS - 1) * 100;
-    if (nivel <= calidad) {      strip.setPixelColor(i, strip.Color(0, 255, 0));
+    if (nivel <= calidadSuavizada) {
+      strip.setPixelColor(i, strip.Color(0, 255, 0));
     } else {
-      float factor = (nivel - calidad) / (100.0 / NUM_LEDS);
+      float factor = (nivel - calidadSuavizada) / (100.0 / NUM_LEDS);
       factor = constrain(factor, 0, 1);
       int r = map(factor * 100, 0, 100, 255, 255);
       int g = map(factor * 100, 0, 100, 255, 0);
@@ -95,3 +98,5 @@ void enviarDatos(float temp, float hum, int air) {
     Serial.println("No conectado a WiFi");
   }
 }
+
+
