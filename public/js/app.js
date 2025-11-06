@@ -99,6 +99,15 @@ function mostrarErrorConexion() {
   const el = $('.ultimaActualizacion');
   if (el) el.style.color = '#e74c3c';
 }
+function mostrarHoraArgentina() {
+  const el = document.querySelector('.ultimaActualizacion');
+  if (!el) return;
+  const ahora = new Date();
+  el.textContent = ahora.toLocaleTimeString('es-AR', {
+    timeZone: 'America/Argentina/Buenos_Aires'
+  });
+}
+setInterval(mostrarHoraArgentina, 1000);
 
 // ===== Historial + tabla + gráfico combinado =====
 async function cargarHistorial() {
