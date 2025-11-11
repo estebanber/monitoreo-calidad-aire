@@ -316,3 +316,164 @@ function colorForValor(tipo, v) {
 
 // Test manual desde consola: ringTest('aire', 700)
 window.ringTest = (t, val) => actualizarAnillo(t, val);
+
+
+
+
+
+
+
+//Incio de sesion y Registro
+function mostrarRegistro() {
+    document.querySelector(".login-container").style.display = "none";
+    document.querySelector(".registro-container").style.display = "block";
+}
+
+function mostrarLogin() {
+    document.querySelector(".login-container").style.display = "block";
+    document.querySelector(".registro-container").style.display = "none";
+}
+
+
+
+
+
+async function registrar() {
+    const sensor_id = document.getElementById("reg-user").value;
+    const password = document.getElementById("reg-pass").value;
+
+    const error = document.getElementById("registro-error");
+    const ok = document.getElementById("registro-ok");
+
+    error.textContent = "";
+    ok.textContent = "";
+
+    if (!sensor_id || !password) {
+        error.textContent = "Completá todos los campos.";
+        return;
+    }
+
+    const body = { sensor_id, password };
+
+    try {
+        const res = await fetch("/api/registro", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            ok.textContent = "Cuenta creada correctamente.";
+        } else {
+            error.textContent = data.message || "Error al registrar.";
+        }
+    } catch {
+        error.textContent = "No se pudo conectar al servidor.";
+    }
+}
+async function registrar() {
+    const sensor_id = document.getElementById("reg-user").value;
+    const password = document.getElementById("reg-pass").value;
+
+    const error = document.getElementById("registro-error");
+    const ok = document.getElementById("registro-ok");
+
+    error.textContent = "";
+    ok.textContent = "";
+
+    if (!sensor_id || !password) {
+        error.textContent = "Completá todos los campos.";
+        return;
+    }
+
+    const body = { sensor_id, password };
+
+    try {
+        const res = await fetch("/api/registro", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            ok.textContent = "Cuenta creada correctamente.";
+        } else {
+            error.textContent = data.message || "Error al registrar.";
+        }
+    } catch {
+        error.textContent = "No se pudo conectar al servidor.";
+    }
+}
+
+
+
+async function login() {
+    const sensor_id = document.getElementById("user").value.trim();
+    const password = document.getElementById("pass").value.trim();
+
+    const error = document.getElementById("error");
+    const completar = document.getElementById("completar");
+
+    // Siempre comienzan ocultos
+    error.style.display = "none";
+    completar.style.display = "none";
+
+    // ✅ Si falta completar campos
+    if (!sensor_id || !password) {
+        completar.style.display = "block";
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sensor_id, password })
+        });
+
+        const data = await res.json();
+
+        // ✅ Credenciales inválidas
+        if (!res.ok) {
+            error.textContent = data.message || "Usuario o contraseña incorrectos.";
+            error.style.display = "block";
+            return;
+        }
+
+        // ✅ Login exitoso
+        document.querySelector(".login-container").style.display = "none";
+        document.getElementById("contenido").style.display = "block";
+
+        localStorage.setItem("sensor_id", sensor_id);
+
+        cargarDatosActuales(sensor_id);
+        cargarHistorial(sensor_id);
+
+    } catch (err) {
+        error.textContent = "No se pudo conectar al servidor.";
+        error.style.display = "block";
+    }
+}
+
+
+
+
+
+
+
+
+
+
+async function cargarDatosActuales(sensor_id) {
+    const res = await fetch(`/api/lecturas/actual?sensor_id=${sensor_id}`);
+    const data = await res.json();
+
+    // actualizar tus elementos del HTML
+    document.getElementById("temperatura").textContent = data.temperatura;
+    document.getElementById("humedad").textContent = data.humedad;
+    document.getElementById("calidad_aire").textContent = data.calidad_aire;
+}
