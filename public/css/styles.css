@@ -274,24 +274,24 @@ body {
 }
 @media (max-width: 900px) {
     .headerPrincipal {
-        margin: 0 auto !important;     /* ✅ Fuerza centrado */
-        padding-left: 0 !important;    /* ✅ Evita que algo empuje a la derecha */
+        margin: 0 auto !important;
+        padding-left: 0 !important;    
         padding-right: 0 !important;
         display: flex !important;
         flex-direction: column;
-        align-items: center;           /* ✅ Centra todo verticalmente */
+        align-items: center;           
         text-align: center;
     }
 
     .contenedorLed {
         width: 100%;
         display: flex;
-        justify-content: center !important; /* ✅ Centra los anillos */
+        justify-content: center !important; 
         align-items: center;
     }
 
     .Aire, .Temp, .Hum {
-        margin-left: 0 !important;     /* ✅ Quita desplazamientos raros */
+        margin-left: 0 !important;     
     }
     #anillo-hum-canvas {
         margin-left: 0;
@@ -633,7 +633,8 @@ th{
 .conocenos {
     font-size: 2rem;
     margin-bottom: 20px;
-    transition: transform 0.5s ease;;
+    transition: transform 0.5s ease;
+    color: #ffff;
 }
 .conocenos:hover{
     transform: scale(1.05);
