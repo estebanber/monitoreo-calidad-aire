@@ -2,8 +2,8 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const sqlite3 = require("sqlite3").verbose();
-const app = express();
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 const DB_PATH = path.join(__dirname, "datos_sensores.db");
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -13,11 +13,14 @@ app.use(express.json());
 app.use(express.static(PUBLIC_DIR));
 
 const db = new sqlite3.Database(DB_PATH);
+
+// --- schema + migración ligera ---
 db.serialize(() => {
   db.run("PRAGMA foreign_keys=ON");
   db.run(`CREATE TABLE IF NOT EXISTS sensores (
     sensor_id TEXT PRIMARY KEY,
     password  TEXT NOT NULL,
+    nombre    TEXT,
     created_at INTEGER NOT NULL
   )`);
   db.run(`CREATE TABLE IF NOT EXISTS datos (
@@ -30,16 +33,19 @@ db.serialize(() => {
     FOREIGN KEY(sensor_id) REFERENCES sensores(sensor_id) ON DELETE CASCADE
   )`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_datos_sensor_time ON datos(sensor_id, timestamp DESC)`);
+
+  // intenta agregar columna nombre si faltaba (ignora error si ya existe)
+  db.run(`ALTER TABLE sensores ADD COLUMN nombre TEXT`, () => {});
 });
 
-function now() { return Date.now(); }
+const now = () => Date.now();
 
 function getAuthFromReq(req) {
   const h = req.headers.authorization || "";
   if (h.startsWith("Bearer ")) {
     const token = h.slice(7);
-    const sep = token.indexOf(":");
-    if (sep > 0) return { sensor_id: token.slice(0, sep), password: token.slice(sep + 1) };
+    const p = token.indexOf(":");
+    if (p > 0) return { sensor_id: token.slice(0, p), password: token.slice(p + 1) };
   }
   const b = req.body || {};
   if (b.sensor_id && b.password) return { sensor_id: String(b.sensor_id), password: String(b.password) };
@@ -48,93 +54,88 @@ function getAuthFromReq(req) {
   return null;
 }
 
-function verifySensor(sensor_id, password) {
-  return new Promise((resolve, reject) => {
-    db.get("SELECT sensor_id FROM sensores WHERE sensor_id=? AND password=?", [sensor_id, password], (e, row) => {
-      if (e) reject(e);
-      else resolve(!!row);
-    });
-  });
-}
+const sensorExists = (sensor_id) => new Promise((res, rej) => {
+  db.get("SELECT 1 FROM sensores WHERE sensor_id=?", [sensor_id], (e, r) => e ? rej(e) : res(!!r));
+});
 
-function sensorExists(sensor_id) {
-  return new Promise((resolve, reject) => {
-    db.get("SELECT sensor_id FROM sensores WHERE sensor_id=?", [sensor_id], (e, row) => {
-      if (e) reject(e);
-      else resolve(!!row);
-    });
-  });
-}
+const verifySensor = (sensor_id, password) => new Promise((res, rej) => {
+  db.get("SELECT 1 FROM sensores WHERE sensor_id=? AND password=?", [sensor_id, password], (e, r) => e ? rej(e) : res(!!r));
+});
 
-function insertSensor(sensor_id, password) {
-  return new Promise((resolve, reject) => {
-    db.run("INSERT INTO sensores(sensor_id,password,created_at) VALUES(?,?,?)", [sensor_id, password, now()], function(e) {
-      if (e) reject(e); else resolve(true);
-    });
-  });
-}
+const insertSensor = ({ sensor_id, password, nombre }) => new Promise((res, rej) => {
+  db.run(
+    "INSERT INTO sensores(sensor_id,password,nombre,created_at) VALUES(?,?,?,?)",
+    [sensor_id, password, nombre || null, now()],
+    function (e) { e ? rej(e) : res(true); }
+  );
+});
 
-function insertDato({ sensor_id, temperatura, humedad, calidad_aire }) {
-  return new Promise((resolve, reject) => {
-    db.run(
-      "INSERT INTO datos(sensor_id,temperatura,humedad,calidad_aire,timestamp) VALUES(?,?,?,?,?)",
-      [sensor_id, temperatura ?? null, humedad ?? null, calidad_aire ?? null, now()],
-      function(e) { if (e) reject(e); else resolve(this.lastID); }
-    );
-  });
-}
+const insertDato = ({ sensor_id, temperatura, humedad, calidad_aire }) => new Promise((res, rej) => {
+  db.run(
+    "INSERT INTO datos(sensor_id,temperatura,humedad,calidad_aire,timestamp) VALUES(?,?,?,?,?)",
+    [sensor_id, temperatura ?? null, humedad ?? null, calidad_aire ?? null, now()],
+    function (e) { e ? rej(e) : res(this.lastID); }
+  );
+});
 
-function getUltimoDato(sensor_id) {
-  return new Promise((resolve, reject) => {
-    const sql = sensor_id
-      ? "SELECT * FROM datos WHERE sensor_id=? ORDER BY timestamp DESC LIMIT 1"
-      : "SELECT * FROM datos ORDER BY timestamp DESC LIMIT 1";
-    const params = sensor_id ? [sensor_id] : [];
-    db.get(sql, params, (e, row) => { if (e) reject(e); else resolve(row || null); });
-  });
-}
+const getUltimoDato = (sensor_id) => new Promise((res, rej) => {
+  const sql = sensor_id
+    ? "SELECT * FROM datos WHERE sensor_id=? ORDER BY timestamp DESC LIMIT 1"
+    : "SELECT * FROM datos ORDER BY timestamp DESC LIMIT 1";
+  const params = sensor_id ? [sensor_id] : [];
+  db.get(sql, params, (e, r) => e ? rej(e) : res(r || null));
+});
 
-function getHistorial({ sensor_id, limite }) {
-  return new Promise((resolve, reject) => {
-    const lim = Math.max(1, Math.min(Number(limite) || 50, 500));
-    const sql = sensor_id
-      ? "SELECT * FROM datos WHERE sensor_id=? ORDER BY timestamp DESC LIMIT ?"
-      : "SELECT * FROM datos ORDER BY timestamp DESC LIMIT ?";
-    const params = sensor_id ? [sensor_id, lim] : [lim];
-    db.all(sql, params, (e, rows) => { if (e) reject(e); else resolve(rows || []); });
-  });
-}
+const getHistorial = ({ sensor_id, limite }) => new Promise((res, rej) => {
+  const lim = Math.max(1, Math.min(Number(limite) || 50, 500));
+  const sql = sensor_id
+    ? "SELECT * FROM datos WHERE sensor_id=? ORDER BY timestamp DESC LIMIT ?"
+    : "SELECT * FROM datos ORDER BY timestamp DESC LIMIT ?";
+  const params = sensor_id ? [sensor_id, lim] : [lim];
+  db.all(sql, params, (e, rows) => e ? rej(e) : res(rows || []));
+});
 
-function getStats(sensor_id) {
-  return new Promise((resolve, reject) => {
-    const sql = sensor_id
-      ? "SELECT COUNT(*) as total_lecturas, AVG(temperatura) as temp_promedio, AVG(humedad) as humedad_promedio FROM datos WHERE sensor_id=?"
-      : "SELECT COUNT(*) as total_lecturas, AVG(temperatura) as temp_promedio, AVG(humedad) as humedad_promedio FROM datos";
-    const params = sensor_id ? [sensor_id] : [];
-    db.get(sql, params, (e, row) => { if (e) reject(e); else resolve(row || { total_lecturas:0, temp_promedio:null, humedad_promedio:null }); });
-  });
-}
+const getStats = (sensor_id) => new Promise((res, rej) => {
+  const sql = sensor_id
+    ? "SELECT COUNT(*) total_lecturas, AVG(temperatura) temp_promedio, AVG(humedad) humedad_promedio FROM datos WHERE sensor_id=?"
+    : "SELECT COUNT(*) total_lecturas, AVG(temperatura) temp_promedio, AVG(humedad) humedad_promedio FROM datos";
+  const params = sensor_id ? [sensor_id] : [];
+  db.get(sql, params, (e, r) => e ? rej(e) : res(r || { total_lecturas:0, temp_promedio:null, humedad_promedio:null }));
+});
 
-app.post("/api/sensores/register", async (req, res) => {
+// --- auth simple para UI (no ESP) ---
+app.post("/api/auth/login", async (req, res) => {
   try {
-    const sensor_id = String(req.body.sensor_id || "").trim();
-    const password = String(req.body.password || "").trim();
+    const { sensor_id, password } = req.body || {};
     if (!sensor_id || !password) return res.status(400).json({ success:false, error:"faltan campos" });
-    const exists = await sensorExists(sensor_id);
-    if (exists) return res.status(409).json({ success:false, error:"sensor ya existe" });
-    await insertSensor(sensor_id, password);
+    const ok = await verifySensor(sensor_id, password);
+    if (!ok) return res.status(403).json({ success:false, error:"credenciales invalidas" });
     res.json({ success:true, sensor_id });
   } catch (e) {
     res.status(500).json({ success:false, error:String(e.message || e) });
   }
 });
 
+app.post("/api/sensores/register", async (req, res) => {
+  try {
+    const sensor_id = String(req.body.sensor_id || "").trim();
+    const password = String(req.body.password || "").trim();
+    const nombre   = req.body.nombre ? String(req.body.nombre).trim() : null;
+    if (!sensor_id || !password) return res.status(400).json({ success:false, error:"faltan campos" });
+    const exists = await sensorExists(sensor_id);
+    if (exists) return res.status(409).json({ success:false, error:"sensor ya existe" });
+    await insertSensor({ sensor_id, password, nombre });
+    res.json({ success:true, sensor_id });
+  } catch (e) {
+    res.status(500).json({ success:false, error:String(e.message || e) });
+  }
+});
+
+// --- endpoint para ESP32 / envío de lecturas ---
 app.post("/api/datos", async (req, res) => {
   try {
     const auth = getAuthFromReq(req);
-    const temperatura = req.body.temperatura;
-    const humedad = req.body.humedad;
-    const calidad_aire = req.body.calidad_aire;
+    const { temperatura, humedad, calidad_aire } = req.body || {};
     if (!auth || !auth.sensor_id || !auth.password) return res.status(401).json({ success:false, error:"auth requerida" });
     const ok = await verifySensor(auth.sensor_id, auth.password);
     if (!ok) return res.status(403).json({ success:false, error:"credenciales invalidas" });
@@ -145,6 +146,7 @@ app.post("/api/datos", async (req, res) => {
   }
 });
 
+// --- lectura para UI ---
 app.get("/api/datos/actual", async (req, res) => {
   try {
     const sensor_id = req.query.sensor_id ? String(req.query.sensor_id) : null;
@@ -189,7 +191,7 @@ app.get("/api/estadisticas", async (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, "index.html"));
 });
 
