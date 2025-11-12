@@ -1,0 +1,164 @@
+body {
+  background-color: #0d1d30;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+
+.contenedorSensores {
+  max-width: 1000px;
+  margin: auto;
+  background-color: rgba(13, 29, 48, 0.75);
+  border-radius: 10px;
+  border: 1px solid #fff;
+  box-shadow: inset 0 0 10px #108888;
+  padding: 20px;
+}
+
+h1 {
+  color: #ffff;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.tabla-container {
+  width: 100%;
+  overflow-x: auto; 
+  margin-bottom: 25px;
+}
+
+.tabla-sensores {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 400px;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #00ffff33;
+  text-align: center;
+}
+
+th {
+  background-color: rgba(0, 255, 255, 0.2);
+  color: #ffff;
+}
+
+tr:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+
+.volver {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  color: #fff;
+  background-color: #00cccc;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.volver:hover {
+  background-color: #009999;
+}
+
+
+@media (max-width: 700px) {
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  th, td {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+
+  .contenedorSensores {
+    padding: 10px;
+  }
+
+  .tabla-sensores {
+    min-width: 350px;
+  }
+}
+
+
+
+
+
+.contenedorUbicaciones{
+    max-width: 1000px;
+    margin: 30px auto;
+    background-color: rgba(13, 29, 48, 0.75);
+    border-radius: 10px;
+    border: 1px solid #fff;
+    box-shadow: inset 0 0 10px #108888;
+    padding: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.contenedorMapa {
+  background-color: rgba(13, 29, 48, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #108888;
+  max-width: 1000px;
+  margin: 30px auto;
+}
+
+.contenedorMapa h2 {
+  color: #00ffff;
+  margin-bottom: 10px;
+}
+
+#selectorSensor {
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  margin-bottom: 15px;
+  background-color: #003b46;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#mapa {
+  height: 500px;
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 700px) {
+  #mapa {
+    height: 300px;
+  }
+}
