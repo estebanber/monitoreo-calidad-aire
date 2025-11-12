@@ -10,6 +10,7 @@ DHT dht(DHTPIN, DHTTYPE);
 #define MQ135_PIN 34
 #define LED_PIN 18
 #define NUM_LEDS 24
+#define BUZZER_PIN 23
 Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 const char* ssid = "Wakapi-Staff";
@@ -18,13 +19,17 @@ const char* serverURL = "http://192.168.48.238:3000/api/datos";
 
 unsigned long previousMillis = 0;
 const unsigned long interval = 45000;
-int modoActual = 0;  // 0 = calidad aire, 1 = temperatura, 2 = humedad
+int modoActual = 0;
+unsigned long previousBeepMillis = 0;
+bool buzzerOn = false;
 
 void setup() {
   Serial.begin(115200);
   dht.begin();
   strip.begin();
   strip.show();
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, LOW);
 
   WiFi.begin(ssid, password);
   Serial.print("Conectando a WiFi");
@@ -62,9 +67,9 @@ void loop() {
   } else {
     actualizarLEDsHumedad(h);
   }
+  manejarBuzzer(airValue);
 
   enviarDatos(t, h, airValue);
-
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     animacionArcoiris(5000);
@@ -72,6 +77,29 @@ void loop() {
   }
 
   delay(200);
+}
+void manejarBuzzer(int airValue) {
+  unsigned long currentMillis = millis();
+  if (airValue < 360) {
+    digitalWrite(BUZZER_PIN, LOW); 
+    return;
+  }
+
+  unsigned long beepInterval = 0;
+  int beepDuration = 150;
+  if (airValue < 520) {
+    beepInterval = 20000;
+  } else if (airValue < 680) {
+    beepInterval = 8000;
+  } else if (airValue < 840) {
+    beepInterval = 3000;
+  } else {
+    beepInterval = 500;
+  }
+  if (currentMillis - previousBeepMillis >= beepInterval) {
+    previousBeepMillis = currentMillis;
+    tone(BUZZER_PIN, 2000, beepDuration);  // tono de 2 kHz
+  }
 }
 
 void actualizarLEDsCalidad(int airValue) {
