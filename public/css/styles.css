@@ -753,7 +753,18 @@ th{
 
 
 
-
+.vermas{
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  color: #fff;
+  background-color: rgba(0, 255, 255, 0.2);
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s;
+}
 
 
 
