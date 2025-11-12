@@ -21,7 +21,7 @@ body {
     color: #fff;
 }
 
-#user{
+#sensor-id{
     width: 90%;
     padding: 12px;
     margin-bottom: 15px;
@@ -47,7 +47,7 @@ body {
     transition: 0.3s;
 }
 
-#user:focus,
+#sensor-id:focus,
 #pass:focus {
     border-color: #18b3b3;
     box-shadow: 0 0 10px #18b3b3;
