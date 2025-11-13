@@ -15,19 +15,18 @@
 
     <!-- Tabla de datos ambientales -->
     <div class="tabla-container">
-      <table class="tabla-sensores">
+      <table class="tablaHistorial" id="tabla-ambiental">
         <thead>
           <tr>
-            <th>ID Sensor</th>
-            <th>Temperatura (°C)</th>
-            <th>Humedad (%)</th>
-            <th>Calidad Aire (AQI)</th>
+            <th>Sensor</th>
+            <th>Temperatura promedio hoy (°C)</th>
+            <th>Humedad promedio hoy (%)</th>
+            <th>Calidad aire promedio hoy (AQI)</th>
+            <th>Lecturas hoy</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td colspan="5">Cargando sensores...</td>
-          </tr>
+          <tr><td colspan="5">Cargando...</td></tr>
         </tbody>
       </table>
     </div>
@@ -68,5 +67,6 @@
 
     <a href="index.html" class="volver">Volver al Monitor</a>
     <script src="js/mapa.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
