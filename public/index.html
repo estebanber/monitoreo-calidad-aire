@@ -11,7 +11,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
 </head>
 <body>
-    <header class="headerPrincipal">
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <input id="sensor-id" type="text" placeholder="Número del ESP32">
+        <input id="pass" type="password" placeholder="Contraseña">
+        <button id="boton-login" onclick="login()">Entrar</button>
+        <p>¿No tenés cuenta? <a href="#" onclick="mostrarRegistro()">Registrate acá</a></p>
+        <p id="error" style="color:red;">Error</p>
+        <p id="completar" style="color:red;">Falta completar los campos</p>
+    </div>
+    <div class="registro-container" style="display:none;">
+        <h2>Registro</h2>
+        <input id="reg-user" type="text" placeholder="Número del ESP32">
+        <input id="reg-pass" type="password" placeholder="Contraseña">
+        <button id="boton-registro" onclick="registrar()">Crear cuenta</button>
+
+        <p id="registro-error" style="color:red;"></p>
+        <p id="registro-ok" style="color:green;"></p>
+
+        <p>¿Ya tenés cuenta? <a href="#" onclick="mostrarLogin()">Iniciar sesión</a></p>
+</div>
+
+
+
+
+    <div id="contenido" style="display:none;">
+    
+        <header class="headerPrincipal">
         <div class="textoHeader">
             <h1>Monitor de Calidad de Aire con ESP32</h1>
             <p class="descripcion">Visualiza en tiempo real la temperatura, humedad y calidad de aire capturada con tu sensor ES32. Diseñado para pruuebas rápidas y despliegues de campo. </p>
@@ -140,9 +167,13 @@
                 </p>
             </div>
         </div>
+        <a href="sensores.html" class="vermas">Ver mas</a>
     </section>
+        
+    </div>
     
-
+    
+    
     <footer>
         <p>Proyecto de Pasantías - Monitoreo Ambiental 2025</p>
     </footer>
