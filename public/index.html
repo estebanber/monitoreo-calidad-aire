@@ -25,13 +25,16 @@
         <h2>Registro</h2>
         <input id="reg-user" type="text" placeholder="Número del ESP32">
         <input id="reg-pass" type="password" placeholder="Contraseña">
+        <input id="reg-ubicacion" type="text" placeholder="Ubicación (ej: Aula 3, Patio, Laboratorio)">
+        <input id="reg-lat" type="number" step="any" placeholder="Latitud (opcional)">
+        <input id="reg-lng" type="number" step="any" placeholder="Longitud (opcional)">
         <button id="boton-registro" onclick="registrar()">Crear cuenta</button>
-
         <p id="registro-error" style="color:red;"></p>
         <p id="registro-ok" style="color:green;"></p>
 
         <p>¿Ya tenés cuenta? <a href="#" onclick="mostrarLogin()">Iniciar sesión</a></p>
-</div>
+    </div>
+
 
 
 

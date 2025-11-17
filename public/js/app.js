@@ -57,18 +57,27 @@ async function login() {
   }
   if (faltan) faltan.textContent = '';
 
-  // Verificación simple: si el sensor tiene datos/estadísticas, damos acceso
   try {
-    const r = await fetch(`${API_BASE}/estadisticas?sensor_id=${encodeURIComponent(sensor_id)}`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    // Si responde, guardamos credenciales para POST desde ESP o futuras acciones
+    // Ahora validamos realmente contra el backend con ID + password
+    const r = await fetch(`${API_BASE}/sensores/login`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ sensor_id, password })
+    });
+    const j = await r.json();
+
+    if (!r.ok || !j.success) {
+      if (errEl) errEl.textContent = j.error || 'ID o contraseña incorrectos';
+      return;
+    }
+
+    // Credenciales válidas -> guardamos
     setCreds(sensor_id, password);
-    // Prefill inputs para próximas sesiones
     if (idEl) idEl.value = sensor_id;
     if (pwEl) pwEl.value = password;
+
     mostrarApp();
-    // disparar cargas
-    cargarDatosIniciales();
+    await cargarDatosIniciales();
     if (!intervaloDatos) iniciarActualizacionAutomatica();
   } catch (e) {
     if (errEl) errEl.textContent = 'No se pudo validar el sensor';
@@ -76,29 +85,45 @@ async function login() {
 }
 
 async function registrar() {
-  const u = $('#reg-user');
-  const p = $('#reg-pass');
+  const u   = $('#reg-user');
+  const p   = $('#reg-pass');
+  const loc = $('#reg-ubicacion');
+  const latEl = $('#reg-lat');
+  const lngEl = $('#reg-lng');
+
   const ok = $('#registro-ok');
   const er = $('#registro-error');
-  
 
   const sensor_id = u?.value.trim() || '';
   const password  = p?.value.trim() || '';
+  const ubicacion = loc?.value.trim() || '';
+
+  const lat = latEl?.value.trim() ? Number(latEl.value.trim()) : null;
+  const lng = lngEl?.value.trim() ? Number(lngEl.value.trim()) : null;
+
   if (!sensor_id || !password) {
     if (er) er.textContent = 'Completá ID y contraseña';
     if (ok) ok.textContent = '';
     return;
   }
+
   try {
+    const body = { sensor_id, password };
+    if (ubicacion) body.ubicacion = ubicacion;
+    if (lat !== null && !Number.isNaN(lat)) body.lat = lat;
+    if (lng !== null && !Number.isNaN(lng)) body.lng = lng;
+
     const r = await fetch(`${API_BASE}/sensores/register`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ sensor_id, password })
+      body: JSON.stringify(body)
     });
     const j = await r.json();
     if (!r.ok || !j.success) throw new Error(j.error || 'Error de registro');
+
     if (ok) ok.textContent = 'Sensor registrado. Ahora podés iniciar sesión.';
     if (er) er.textContent = '';
+
   } catch (e) {
     if (er) er.textContent = String(e.message || e);
     if (ok) ok.textContent = '';
@@ -113,22 +138,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (idEl && creds.sensor_id) idEl.value = creds.sensor_id;
   if (pwEl && creds.password)  pwEl.value  = creds.password;
 
-  // Arranca visible el login
   mostrarLogin();
 
-  // Botones existen en HTML
   const btnLogin = $('#boton-login');
   if (btnLogin) btnLogin.onclick = login;
   const btnReg = $('#boton-registro');
   if (btnReg) btnReg.onclick = registrar;
 
-  // Gráfico
   inicializarGrafico();
-
-  // Anillos
   crearAnillosCanvas();
 
-  // Historial selector
   const limiteEl = $('#limite-registros');
   if (limiteEl) limiteEl.addEventListener('change', cargarHistorial);
 });
@@ -191,7 +210,6 @@ function actualizarInterfazDatos(data) {
 
   setText('.ultimaActualizacion', fmtTime(Number(data.timestamp)));
 
-  // Anillos
   actualizarAnillo('aire', data.calidad_aire);
   actualizarAnillo('temp', data.temperatura);
   actualizarAnillo('hum',  data.humedad);
@@ -334,12 +352,10 @@ class RingCanvas {
     this.r  = Math.min(this.cx, this.cy) - 16;
     this.ledR = 9;
 
-    // color por LED
     this.leds = Array.from({length: this.num}, () => ({ r: 0, g: 255, b: 106 }));
     this.target = { r: 0, g: 255, b: 106 };
 
-    // animación secuencial
-    this.waveIndex = this.num - 1; // empieza en el último
+    this.waveIndex = this.num - 1;
     this.progress = 0;
     this.running = false;
 
@@ -349,7 +365,7 @@ class RingCanvas {
 
   setTargetColor(rgb) {
     this.target = { ...rgb };
-    this.waveIndex = this.num - 1; // reinicia ola
+    this.waveIndex = this.num - 1;
     this.progress = 0;
     this.running = true;
   }
@@ -366,15 +382,13 @@ class RingCanvas {
     if (this.waveIndex < 0) { this.running = false; return; }
     const i = this.waveIndex;
 
-    // transición suave del LED i hacia target
     const c0 = this.leds[i], c1 = this.target;
-    const blend = 0.22; // suavidad de cambio de color
+    const blend = 0.22;
     const nr = c0.r + (c1.r - c0.r) * blend;
     const ng = c0.g + (c1.g - c0.g) * blend;
     const nb = c0.b + (c1.b - c0.b) * blend;
     this.leds[i] = { r: nr, g: ng, b: nb };
 
-    // Si ya está muy cerca del color objetivo, pasa al LED anterior
     const dist = Math.abs(nr - c1.r) + Math.abs(ng - c1.g) + Math.abs(nb - c1.b);
     if (dist < 2) {
       this.leds[i] = { ...this.target };

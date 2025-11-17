@@ -3,7 +3,6 @@ const API_SENSORES = '/api/sensores';
 let map;
 let markers = new Map(); // sensor_id -> marker
 
-
 function colorByAQI(aqi) {
   if (aqi == null) return 'gray';
   if (aqi < 360) return 'green';
@@ -38,7 +37,8 @@ function upsertMarker(s) {
   const html = `
     <div style="min-width:220px">
       <strong>${s.nombre || s.sensor_id}</strong><br>
-      <small>Última: ${fmtTime(s.last_ts)}</small><br>
+      ${s.ubicacion ? `<small>${s.ubicacion}</small><br>` : ''}
+      <small>Última: ${s.last_ts ? fmtTime(s.last_ts) : '—'}</small><br>
       Temp: ${s.temperatura ?? '—'} °C<br>
       Hum: ${s.humedad ?? '—'} %<br>
       AQI: ${s.calidad_aire ?? '—'}
@@ -56,6 +56,55 @@ function upsertMarker(s) {
     markers.set(s.sensor_id, mk);
   }
 }
+
+function dropStaleMarkers(validIds) {
+  for (const [id, mk] of markers.entries()) {
+    if (!validIds.has(id)) {
+      map.removeLayer(mk);
+      markers.delete(id);
+    }
+  }
+}
+
+// Rellenar tabla de ubicaciones
+function renderTablaUbicaciones(sensores) {
+  const tbody = document.querySelector('#cuerpo-tabla');
+  if (!tbody) return;
+
+  if (!Array.isArray(sensores) || sensores.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4">Sin sensores registrados</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = sensores.map(s => `
+    <tr>
+      <td>${s.nombre || s.sensor_id}</td>
+      <td>${s.ubicacion || '—'}</td>
+      <td>${s.lat != null ? Number(s.lat).toFixed(6) : '—'}</td>
+      <td>${s.lng != null ? Number(s.lng).toFixed(6) : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+// Rellenar selector para centrar en un sensor
+function renderSelectorSensores(sensores) {
+  const sel = document.getElementById('selectorSensor');
+  if (!sel) return;
+
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Seleccionar un sensor...</option>' +
+    sensores.map(s => `
+      <option value="${s.sensor_id}">
+        ${s.nombre || s.sensor_id}
+      </option>
+    `).join('');
+
+  // Mantener selección si sigue existiendo
+  if (current && sensores.some(s => s.sensor_id === current)) {
+    sel.value = current;
+  }
+}
+
 async function cargarPromediosHoy() {
   const tbody = document.querySelector('#tabla-ambiental tbody');
   if (!tbody) return;
@@ -84,28 +133,25 @@ async function cargarPromediosHoy() {
     tbody.innerHTML = '<tr><td colspan="5">Error al cargar datos</td></tr>';
   }
 }
-function dropStaleMarkers(validIds) {
-  for (const [id, mk] of markers.entries()) {
-    if (!validIds.has(id)) {
-      map.removeLayer(mk);
-      markers.delete(id);
-    }
-  }
-}
 
 async function refresh() {
   try {
     const sensores = await fetchSensores();
     const valid = new Set();
+
     sensores.forEach(s => {
       upsertMarker(s);
       valid.add(s.sensor_id);
     });
     dropStaleMarkers(valid);
-    // Ajuste de bounds si es el primer render
+
+    renderTablaUbicaciones(sensores);
+    renderSelectorSensores(sensores);
+
     if (!refresh._fitted && sensores.some(s => s.lat != null && s.lng != null)) {
-      const pts = sensores.filter(s => s.lat != null && s.lng != null)
-                          .map(s => [Number(s.lat), Number(s.lng)]);
+      const pts = sensores
+        .filter(s => s.lat != null && s.lng != null)
+        .map(s => [Number(s.lat), Number(s.lng)]);
       if (pts.length === 1) {
         map.setView(pts[0], 14);
       } else if (pts.length > 1) {
@@ -124,7 +170,22 @@ document.addEventListener('DOMContentLoaded', () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19, attribution: '&copy; OpenStreetMap'
   }).addTo(map);
+
   cargarPromediosHoy();
   refresh();
   setInterval(refresh, 20000);
+
+  // Cuando eligen un sensor del selector, centrar y abrir popup
+  const sel = document.getElementById('selectorSensor');
+  if (sel) {
+    sel.addEventListener('change', () => {
+      const id = sel.value;
+      if (!id) return;
+      const mk = markers.get(id);
+      if (mk) {
+        map.setView(mk.getLatLng(), 15);
+        mk.openPopup();
+      }
+    });
+  }
 });
