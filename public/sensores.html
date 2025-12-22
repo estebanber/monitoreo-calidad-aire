@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen de Sensores</title>
+  <link rel="stylesheet" href="css/sensores.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    
+  <section class="contenedorSensores">
+    <h1>Resumen de Sensores</h1>
+
+    <!-- Tabla de datos ambientales -->
+    <div class="tabla-container">
+      <table class="tablaHistorial" id="tabla-ambiental">
+        <thead>
+          <tr>
+            <th>Sensor</th>
+            <th>Temperatura promedio hoy (°C)</th>
+            <th>Humedad promedio hoy (%)</th>
+            <th>Calidad aire promedio hoy (AQI)</th>
+            <th>Lecturas hoy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+<section class="contenedorUbicaciones">
+  <h1>Ubicación</h1>
+  <!-- Tabla de ubicaciones -->
+  <div class="tabla-container">
+    <table class="tabla-sensores">
+      <thead>
+        <tr>
+          <th>Sensor</th>
+          <th>Ubicación</th>
+          <th>Latitud</th>
+          <th>Longitud</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpo-tabla">
+        <tr>
+          <td colspan="4">Cargando sensores...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+
+
+
+
+    <section class="contenedorMapa">
+        <h1>Ubicación de Sensores</h1>
+        <select id="selectorSensor">
+            <option value="">Seleccionar un sensor...</option>
+        </select>
+        <div id="mapa"></div>
+    </section>
+
+    <a href="index.html" class="volver">Volver al Monitor</a>
+    <script src="js/mapa.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

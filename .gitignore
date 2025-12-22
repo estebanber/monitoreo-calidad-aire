@@ -3,7 +3,6 @@ node_modules/
 npm-debug.log*
 
 # Base de datos
-*.db
 *.sqlite
 *.sqlite3
 

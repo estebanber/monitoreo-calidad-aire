@@ -3,108 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor de Calidad de Aire - ESP32</title>
+    <title>Monitor calidad de aire</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
 </head>
 <body>
-    <header>
-        <h1>🌱 Monitor de Calidad de Aire</h1>
-        <p>Sistema de monitoreo ambiental con ESP32</p>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <input id="sensor-id" type="text" placeholder="Número del ESP32">
+        <input id="pass" type="password" placeholder="Contraseña">
+        <button id="boton-login" onclick="login()">Entrar</button>
+        <p>¿No tenés cuenta? <a href="#" onclick="mostrarRegistro()">Registrate acá</a></p>
+        <p id="error" style="color:red;">Error</p>
+        <p id="completar" style="color:red;">Falta completar los campos</p>
+    </div>
+    <div class="registro-container" style="display:none;">
+        <h2>Registro</h2>
+        <input id="reg-user" type="text" placeholder="Número del ESP32">
+        <input id="reg-pass" type="password" placeholder="Contraseña">
+        <input id="reg-ubicacion" type="text" placeholder="Ubicación (ej: Aula 3, Patio, Laboratorio)">
+        <input id="reg-lat" type="number" step="any" placeholder="Latitud (opcional)">
+        <input id="reg-lng" type="number" step="any" placeholder="Longitud (opcional)">
+        <button id="boton-registro" onclick="registrar()">Crear cuenta</button>
+        <p id="registro-error" style="color:red;"></p>
+        <p id="registro-ok" style="color:green;"></p>
+
+        <p>¿Ya tenés cuenta? <a href="#" onclick="mostrarLogin()">Iniciar sesión</a></p>
+    </div>
+
+
+
+
+
+    <div id="contenido" style="display:none;">
+    
+        <header class="headerPrincipal">
+        <div class="textoHeader">
+            <h1>Monitor de Calidad de Aire con ESP32</h1>
+            <p class="descripcion">Visualiza en tiempo real la temperatura, humedad y calidad de aire capturada con tu sensor ES32. Diseñado para pruuebas rápidas y despliegues de campo. </p>
+            <div class="contenedorUltimaLectura">
+                <p>
+                    Ultima actualización: <span class="ultimaActualizacion">--</span>
+                </p>
+            </div>
+        </div>
+        <div class="contenedorLed">
+            <div class="Aire">
+                <p class="tituloLedAire">Calidad de Aire</p>
+                <canvas id="anillo-aire-canvas" width="240" height="240"></canvas>
+            </div>
+            <div class="Temp">
+                <p class="tituloLedTemp">Temperatura </p>
+                <canvas id="anillo-temp-canvas" width="240" height="240"></canvas>
+            </div>
+            <div class="Hum">
+                <p class="tituloLedHum">Humedad</p>
+                <canvas id="anillo-hum-canvas"  width="240" height="240"></canvas>
+            </div>
+            
+        </div>
     </header>
 
-    <main>
-        <!-- Datos en tiempo real -->
-        <section class="datos-actuales">
-            <h2>📊 Datos Actuales</h2>
-            <div class="tarjetas">
-                <div class="tarjeta temperatura">
-                    <h3>🌡️ Temperatura</h3>
-                    <span class="valor" id="temperatura">--</span>
-                    <span class="unidad">°C</span>
+    <section class="contenedorDatosActuales">
+        <h2 class="datosActuales">Datos Actuales</h2> 
+        <div class="gridDatos">
+            <div class="grupo">
+                <div class="tarjetaTemperatura">
+                    <h3 class="temperatura">Temperatura</h3>
+                    <span class="indicadorTemperatura" id="temperatura">1</span><span>°C</span>
                 </div>
-                <div class="tarjeta humedad">
-                    <h3>💧 Humedad</h3>
-                    <span class="valor" id="humedad">--</span>
-                    <span class="unidad">%</span>
-                </div>
-                <div class="tarjeta aire">
-                    <h3>🌬️ Calidad Aire</h3>
-                    <span class="valor" id="calidad-aire">--</span>
-                    <span class="estado" id="estado-aire">--</span>
+                <div class="infoTemperatura">
+                    <h4 class="tituloInfoTemperatura">ESTADO ACTUAL</h4>
+                    <p>El aire es <span class="estado-aire" id="estado-aire"></span></p>
                 </div>
             </div>
-            <div class="ultima-actualizacion">
-                Última actualización: <span id="ultima-actualizacion">--</span>
-            </div>
-        </section>
 
-        <!-- Estadísticas -->
-        <section class="estadisticas">
-            <h2>📈 Estadísticas (24h)</h2>
-            <div class="stats-grid">
-                <div class="stat">
-                    <label>Total lecturas:</label>
-                    <span id="total-lecturas">--</span>
+            <div class="grupo">
+                <div class="tarjetaHumedad">
+                    <h3 class="humedad">Humedad</h3>
+                    <span class="indicadorHumedad" id="humedad">--</span><span>%</span>
                 </div>
-                <div class="stat">
-                    <label>Temp. promedio:</label>
-                    <span id="temp-promedio">--</span>°C
-                </div>
-                <div class="stat">
-                    <label>Humedad promedio:</label>
-                    <span id="humedad-promedio">--</span>%
+                <div class="infoHumedad">
+                    <h4 class="tituloInfoHumedad">PEDIODO DE ACTUALIZACIÓN</h4>
+                    <p>Cada 5 segundos.</p>
                 </div>
             </div>
-        </section>
 
-        <!-- Historial -->
-        <section class="historial">
-            <h2>📋 Historial Reciente</h2>
-            <div class="controles">
-                <button onclick="cargarHistorial()">🔄 Actualizar</button>
-                <select id="limite-registros">
-                    <option value="10">Últimos 10</option>
-                    <option value="50" selected>Últimos 50</option>
-                    <option value="100">Últimos 100</option>
-                </select>
+            <div class="grupo">
+                <div class="tarjetaCalidad">
+                    <h3 class="calidad">Calidad</h3>
+                    <span class="indicadorCalidad" id="calidad_aire">--</span><span>AQI</span>
+                </div>
+                <div class="infoCalidad">
+                    <h4 class="tituloInfoCalidad">SENSORES Y DISPOSITIVOS</h4>
+                    <p>ESP32 + DHT22 + MQ135.</p>
+                </div>
             </div>
-            <div class="tabla-container">
-                <table id="tabla-historial">
-                    <thead>
-                        <tr>
-                            <th>Fecha/Hora</th>
-                            <th>Temperatura</th>
-                            <th>Humedad</th>
-                            <th>Calidad Aire</th>
-                            <th>Dispositivo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="5" class="cargando">Cargando datos...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Simulador para pruebas -->
-        <section class="simulador">
-            <h2>🧪 Simulador (Para Pruebas)</h2>
-            <p>Usa este simulador para probar el sistema antes de conectar el ESP32</p>
-            <div class="form-simulador">
-                <input type="number" id="sim-temp" placeholder="Temperatura (°C)" step="0.1">
-                <input type="number" id="sim-humedad" placeholder="Humedad (%)" step="0.1">
-                <input type="number" id="sim-aire" placeholder="Calidad aire (0-1000)" step="1">
-                <button onclick="enviarDatosPrueba()">📤 Enviar Datos</button>
-            </div>
-        </section>
-    </main>
+    <section class="contenedorHistorial">
+        <h2 class="tituloHistorial">Historial de lecturas</h2>
+        <button onclick="cargarHistorial()" class="botonHistorial">Actualizar</button>
+            <select name="" id="limite-registros" class="selectorHistorial">
+                <option value="10">Ultimos 10</option>
+                <option value="50" selected>Ultimos 50</option>
+                <option value="100">Ultimos 100</option>
+            </select>
+        <div class="contenedorTablaHistorial">
+            <table class="tablaHistorial" id="tabla-historial">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Temperatura</th>
+                        <th>Humedad</th>
+                        <th>Calidad</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" class="cargando">
+                            Cargando datos...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section class="contenedorGrafico">
+        <h2>Evolución de Datos</h2>
+        <canvas id="graficoLecturas"></canvas>
+    </section>
 
+
+    
+
+
+
+    <section class="contenedorConocenos">
+        <h2 class="conocenos">Conocenos</h2>
+
+        <div class="infoConocenos">
+            <div class="quienesSomos">
+                <h3>¿Quienes somos?</h3> 
+                <p>
+                    Somos estudiantes de la Escuela Tomas Alva Edison realizando nuestras pasantías en Wakapi. Nos interesa la tecnología y trabajamos en equipo para aprender y desarrollar proyectos reales.
+                </p>
+            </div>
+
+            <div class="comoHicimos">
+                <h3>¿Como hicimos el proyecto?</h3>
+                <p>
+                    Repartimos tareas según nuestras habilidades: Joaquín y Rodrigo hicieron el front-end, y Cayetano desarrolló el firmware del ESP32. Usamos Git, Trello y Teams para organizarnos y coordinarnos.
+                </p>
+            </div>
+
+            <div class="comoFunciona">
+                <h3>¿Como funciona el proyecto?</h3>
+                <p>
+                    El ESP32 toma datos del DHT22 y del MQ135, los envía por WiFi al backend y la web los actualiza en tiempo real para mostrar temperatura, humedad y calidad del aire.
+                </p>
+            </div>
+        </div>
+        <a href="sensores.html" class="vermas">Ver mas</a>
+    </section>
+        
+    </div>
+    
+    
+    
     <footer>
         <p>Proyecto de Pasantías - Monitoreo Ambiental 2025</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
